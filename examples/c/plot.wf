@@ -1,0 +1,46 @@
+{
+	"inputs": {
+		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64",
+		"gcc": "catalog:gnu.org/gcc:v11.2.0:amd64"
+		"libc": "catalog:gnu.org/libc:v2.35:amd64"
+		"binutils": "catalog:gnu.org/binutils:v2.38:amd64"
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/tools/busybox": "pipe::busybox",
+					"/tools/gcc": "pipe::gcc",
+					"/tools/binutils": "pipe::binutils",
+					"/tools/libc": "pipe::libc",
+					"/pwd": "mount:overlay:."
+				},
+				"action": {
+					"script": {
+						"interpreter": "/tools/busybox/bin/sh",
+						"contents": [
+							"export PATH=/tools/busybox/bin:/tools/gcc/bin:/tools/binutils/bin:$PATH",
+							"mkdir -p /prefix/",
+							"mkdir /out"
+							"ln -s /tools/libc/lib/ /prefix/lib",
+							"ln -s /tools/libc/lib/ /lib64",
+							"ln -s /tools/libc/lib/ /lib",
+							"cd /pwd",
+							"gcc test.c -o/out/hello -I/tools/libc/include -L/tools/libc/lib",
+							"/out/hello",
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/out",
+						"packtype": "tar"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"amd64": "pipe:build:out"
+	}
+}

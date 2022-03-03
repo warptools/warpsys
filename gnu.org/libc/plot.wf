@@ -1,0 +1,36 @@
+{
+	"inputs": {
+		"rootfs": "catalog:warpsys.org/bootstrap-rootfs:bullseye-1646092800:amd64"
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/": "pipe::rootfs",
+					"/src": "catalog:gnu.org/libc:v2.35:src"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/bin/sh",
+						"contents": [
+							"mkdir -v /build",
+							"cd /build"
+							"/src/*/configure --prefix=/prefix/"
+							"make",
+							"make DESTDIR=/out install",
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/out/prefix",
+						"packtype": "tar"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"amd64": "pipe:build:out"
+	}
+}

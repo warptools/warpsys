@@ -1,0 +1,44 @@
+{
+	"inputs": {
+		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64",
+		"libc": "catalog:gnu.org/libc:v2.35:amd64",
+		"go": "catalog:go.dev/go:v1.17.7:amd64",
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/tools/busybox": "pipe::busybox",
+					"/tools/libc": "pipe::libc",
+					"/tools/go": "pipe::go",
+					"/pwd": "mount:overlay:."
+				},
+				"action": {
+					"script": {
+						"interpreter": "/tools/busybox/bin/sh",
+						"contents": [
+							"export PATH=/tools/go/go/bin:/tools/busybox/bin:$PATH",
+							"mkdir /out"
+							"mkdir -p /prefix/",
+							"mkdir /tmp",
+							"ln -s /tools/libc/lib/ /prefix/lib",
+							"ln -s /tools/libc/lib/ /lib64",
+							"cd /pwd",
+							"go build -o /out/test test.go",
+							"/out/test",
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/out",
+						"packtype": "tar"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"amd64": "pipe:build:out"
+	}
+}

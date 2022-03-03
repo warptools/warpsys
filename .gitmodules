@@ -1,0 +1,6 @@
+[submodule "warpsys.org/bootstrap-rootfs/mmdebstrap"]
+	path = warpsys.org/bootstrap-rootfs/mmdebstrap
+	url = https://gitlab.mister-muffin.de/josch/mmdebstrap.git
+[submodule ".warpforge/catalogs/default"]
+	path = .warpforge/catalogs/default
+	url = git@github.com:warpsys/catalog.git
