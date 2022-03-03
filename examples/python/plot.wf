@@ -1,0 +1,36 @@
+{
+	"inputs": {
+		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64",
+		"libc": "catalog:gnu.org/libc:v2.35:amd64"
+		"python": "catalog:python.org/python:v3.10.2:amd64"
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/tools/busybox": "pipe::busybox",
+					"/tools/python": "pipe::python",
+					"/tools/libc": "pipe::libc",
+					"/pwd": "mount:overlay:."
+				},
+				"action": {
+					"script": {
+						"interpreter": "/tools/busybox/bin/sh",
+						"contents": [
+							"export PATH=/tools/busybox/bin:/tools/python/bin:$PATH",
+							"mkdir -p /prefix/",
+							"mkdir /out"
+							"ln -s /tools/libc/lib/ /prefix/lib",
+							"ln -s /tools/libc/lib/ /lib64",
+							"ln -s /tools/libc/lib/ /lib",
+							"cd /pwd",
+							"python3 test.py",
+						]
+					}
+				},
+				"outputs": {}
+			}
+		}
+	},
+	"outputs": {}
+}
