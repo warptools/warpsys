@@ -1,0 +1,53 @@
+{
+	"inputs": {
+		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64",
+		"libc": "catalog:gnu.org/libc:v2.35:amd64"
+		"binutils": "catalog:gnu.org/binutils:v2.38:amd64"
+		"gcc": "catalog:gnu.org/gcc:v11.2.0:amd64"
+		"zlib": "catalog:zlib.net/zlib:v1.2.11:amd64"
+		"rust": "catalog:rust-lang.org/rust:v1.59.0:x86_64-unknown-linux-gnu"
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/tools/busybox": "pipe::busybox",
+					"/tools/binutils": "pipe::binutils",
+					"/tools/rust": "pipe::rust",
+					"/tools/libc": "pipe::libc",
+					"/tools/gcc": "pipe::gcc",
+					"/tools/zlib": "pipe::zlib",
+					"/pwd": "mount:overlay:."
+				},
+				"action": {
+					"script": {
+						"interpreter": "/tools/busybox/bin/sh",
+						"contents": [
+							"export PATH=/tools/busybox/bin:/tools/gcc/bin:/tools/binutils/bin:/tools/rust/bin:$PATH",
+							"mkdir -p /prefix/",
+							"mkdir /tmp"
+							"ln -s /tools/libc/lib/ /prefix/lib",
+							"ln -s /tools/libc/lib/ /lib64",
+							"ln -s /tools/libc/lib/ /lib",
+							"ln -s /tools/gcc/bin/gcc /tools/gcc/bin/cc",
+							"cd /pwd/hello",
+							"LD_LIBRARY_PATH=/tools/gcc/lib64:/tools/zlib/lib cargo build --target-dir /build/ --release"
+							"LD_LIBRARY_PATH=/tools/gcc/lib64/ /build/release/hello"
+							"mkdir /out"
+							"cp /build/release/hello /out"
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"packtype": "tar",
+						"from": "/out"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"out": "pipe:build:out"
+	}
+}
