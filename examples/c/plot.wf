@@ -13,13 +13,13 @@
 					"/tools/gcc": "pipe::gcc",
 					"/tools/binutils": "pipe::binutils",
 					"/tools/libc": "pipe::libc",
-					"/pwd": "mount:overlay:."
+					"/pwd": "mount:overlay:.",
+					"$PATH": "literal:/tools/busybox/bin:/tools/gcc/bin:/tools/binutils/bin"
 				},
 				"action": {
 					"script": {
-						"interpreter": "/tools/busybox/bin/sh",
+						"interpreter": "sh",
 						"contents": [
-							"export PATH=/tools/busybox/bin:/tools/gcc/bin:/tools/binutils/bin:$PATH",
 							"mkdir -p /prefix/",
 							"mkdir /out"
 							"ln -s /tools/libc/lib/ /prefix/lib",
