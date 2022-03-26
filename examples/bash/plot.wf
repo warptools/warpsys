@@ -1,0 +1,37 @@
+{
+	"inputs": {
+		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64"
+	},
+	"steps": {
+		"hello-world": {
+			"protoformula": {
+				"inputs": {
+					"/tools/busybox": "pipe::busybox",
+					"/pwd": "mount:rw:.",
+					"$TEST": "literal:this is a string!"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/tools/busybox/bin/sh",
+						"contents": [
+							"export PATH=/tools/busybox/bin",
+							"mkdir /output",
+							"echo 'hello world'",
+							"echo test $TEST > /pwd/test"
+						],
+						"network": false
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/output",
+						"packtype": "tar"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"output": "pipe:hello-world:out"
+	}
+}
