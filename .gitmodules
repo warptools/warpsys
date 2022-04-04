@@ -1,5 +1,5 @@
 [submodule "warpsys.org/bootstrap-rootfs/mmdebstrap"]
-	path = warpsys.org/bootstrap-rootfs/mmdebstrap
+	path = debian-bootstrap/mmdebstrap
 	url = https://gitlab.mister-muffin.de/josch/mmdebstrap.git
 [submodule ".warpforge/catalogs/default"]
 	path = .warpforge/catalogs/default

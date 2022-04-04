@@ -1,37 +1,36 @@
 {
 	"inputs": {
-		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64"
+		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64"
+		"bash": "catalog:warpsys.org/gnu/bash:v5.1.16:amd64"
 	},
 	"steps": {
-		"hello-world": {
+		"build": {
 			"protoformula": {
 				"inputs": {
-					"/tools/busybox": "pipe::busybox",
-					"/pwd": "mount:rw:.",
-					"$TEST": "literal:this is a string!"
+					"/pkg/busybox": "pipe::busybox",
+					"/pkg/bash": "pipe::bash",
+					"/pkg/glibc": "pipe::glibc",
+					"/pwd": "mount:overlay:."
+					"$PATH": "literal:/pkg/busybox/bin:/pkg/bash/bin"
 				},
 				"action": {
 					"script": {
-						"interpreter": "/tools/busybox/bin/sh",
+						"interpreter": "/pkg/busybox/bin/sh",
 						"contents": [
-							"export PATH=/tools/busybox/bin",
-							"mkdir /output",
-							"echo 'hello world'",
-							"echo test $TEST > /pwd/test"
-						],
-						"network": false
+							"mkdir -p /prefix/",
+							"mkdir /out"
+							"ln -s /pkg/glibc/lib/ /prefix/lib",
+							"ln -s /pkg/glibc/lib/ /lib64",
+							"ln -s /pkg/glibc/lib/ /lib",
+							"cd /pwd",
+							"bash test.sh",
+						]
 					}
 				},
-				"outputs": {
-					"out": {
-						"from": "/output",
-						"packtype": "tar"
-					}
-				}
+				"outputs": {}
 			}
 		}
 	},
-	"outputs": {
-		"output": "pipe:hello-world:out"
-	}
+	"outputs": {}
 }

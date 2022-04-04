@@ -1,28 +1,28 @@
 {
 	"inputs": {
-		"busybox": "catalog:busybox.net/busybox:v1.35.0:amd64",
-		"libc": "catalog:gnu.org/libc:v2.35:amd64"
-		"python": "catalog:python.org/python:v3.10.2:amd64"
+		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64"
+		"python": "catalog:warpsys.org/python:v3.10.2:amd64"
 	},
 	"steps": {
 		"build": {
 			"protoformula": {
 				"inputs": {
-					"/tools/busybox": "pipe::busybox",
-					"/tools/python": "pipe::python",
-					"/tools/libc": "pipe::libc",
+					"/pkg/busybox": "pipe::busybox",
+					"/pkg/python": "pipe::python",
+					"/pkg/glibc": "pipe::glibc",
 					"/pwd": "mount:overlay:."
+					"$PATH": "literal:/pkg/busybox/bin:/pkg/python/bin"
 				},
 				"action": {
 					"script": {
-						"interpreter": "/tools/busybox/bin/sh",
+						"interpreter": "sh",
 						"contents": [
-							"export PATH=/tools/busybox/bin:/tools/python/bin:$PATH",
 							"mkdir -p /prefix/",
 							"mkdir /out"
-							"ln -s /tools/libc/lib/ /prefix/lib",
-							"ln -s /tools/libc/lib/ /lib64",
-							"ln -s /tools/libc/lib/ /lib",
+							"ln -s /pkg/glibc/lib/ /prefix/lib",
+							"ln -s /pkg/glibc/lib/ /lib64",
+							"ln -s /pkg/glibc/lib/ /lib",
 							"cd /pwd",
 							"python3 test.py",
 						]

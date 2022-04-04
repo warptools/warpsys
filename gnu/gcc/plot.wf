@@ -1,0 +1,48 @@
+{
+	"inputs": {
+		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
+		"mpfr": "catalog:warpsys.org/mpfr:v4.1.0:src",
+		"gmp": "catalog:warpsys.org/gmp:v6.2.1:src",
+		"mpc": "catalog:warpsys.org/gnu/mpc:v1.2.1:src",
+		"gcc": "catalog:warpsys.org/gnu/gcc:v11.2.0:src"
+
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/": "pipe::rootfs",
+					"/src/mpfr": "pipe::mpfr",
+					"/src/gmp": "pipe::gmp",
+					"/src/mpc": "pipe::mpc",
+					"/src/gcc": "pipe::gcc"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/bin/sh",
+						"contents": [
+							"cd /src/gcc/*",
+							"cp -vpR -v /src/mpfr/* mpfr"
+							"cp -vpR /src/gmp/* gmp"
+							"cp -vpR /src/mpc/* mpc"
+							"mkdir -v /build",
+							"cd /build"
+							"/src/gcc/*/configure --prefix=/prefix/ --disable-multilib --enable-languages=c,c++"
+							"make",
+							"make DESTDIR=/out install",
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/out/prefix",
+						"packtype": "tar"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"amd64": "pipe:build:out"
+	}
+}

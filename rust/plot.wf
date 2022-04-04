@@ -1,39 +1,35 @@
 {
 	"inputs": {
 		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"gcc": "catalog:warpsys.org/gnu/gcc:v11.2.0:amd64"
 		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64"
-		"binutils": "catalog:warpsys.org/gnu/binutils:v2.38:amd64"
+		"rust-installer": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu-installer"
 	},
 	"steps": {
 		"build": {
 			"protoformula": {
 				"inputs": {
 					"/pkg/busybox": "pipe::busybox",
-					"/pkg/gcc": "pipe::gcc",
-					"/pkg/binutils": "pipe::binutils",
+					"/rust-installer": "pipe::rust-installer",
 					"/pkg/glibc": "pipe::glibc",
-					"/pwd": "mount:overlay:.",
-					"$PATH": "literal:/pkg/busybox/bin:/pkg/gcc/bin:/pkg/binutils/bin"
+					"$PATH": "literal:/pkg/busybox/bin:/pkg/busybox/usr/bin"
 				},
 				"action": {
 					"script": {
 						"interpreter": "sh",
 						"contents": [
-							"mkdir -p /prefix/",
 							"mkdir /out"
+							"mkdir /prefix"
 							"ln -s /pkg/glibc/lib/ /prefix/lib",
 							"ln -s /pkg/glibc/lib/ /lib64",
 							"ln -s /pkg/glibc/lib/ /lib",
-							"cd /pwd",
-							"gcc test.c -o/out/hello -I/pkg/glibc/include -L/pkg/glibc/lib",
-							"/out/hello",
+							"ln -s /pkg/gcc/bin/gcc /pkg/gcc/bin/cc",
+							"sh /rust-installer/*/install.sh --prefix=/out"
 						]
 					}
 				},
 				"outputs": {
 					"out": {
-						"from": "/out",
+						"from": "/out"
 						"packtype": "tar"
 					}
 				}
@@ -41,6 +37,6 @@
 		}
 	},
 	"outputs": {
-		"amd64": "pipe:build:out"
+		"x86_64-unknown-linux-gnu": "pipe:build:out"
 	}
 }
