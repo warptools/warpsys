@@ -33,8 +33,9 @@ sudo chown -R $USER $TMPDIR
 # delete all __pycache__ dirs, because they are non-deterministic
 find $TMPDIR -type d -name __pycache__ -exec rm -rf {} +
 
-# pack the rootfs into our warehouse
-rio pack --target=ca+file://$HOME/.warpforge/warehouse --filters=uid=0,gid=0,setid=ignore,mtime=@$SOURCE_DATE_EPOCH tar $TMPDIR
+# pack the rootfs into the warpsys root workspace's warehouse
+mkdir -p ../.warpforge/warehouse
+rio pack --target=ca+file://../.warpforge/warehouse --filters=uid=0,gid=0,setid=ignore,mtime=@$SOURCE_DATE_EPOCH tar $TMPDIR
 
 # delete the temp dir
 rm -rf $TMPDIR
