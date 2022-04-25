@@ -1,31 +1,19 @@
 {
 	"inputs": {
-		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64"
 		"python": "catalog:warpsys.org/python:v3.10.2:amd64"
+		"ld": "catalog:warpsys.org/gnu/glibc:v2.35:ld-amd64"
 	},
 	"steps": {
 		"build": {
 			"protoformula": {
 				"inputs": {
-					"/pkg/busybox": "pipe::busybox",
 					"/pkg/python": "pipe::python",
-					"/pkg/glibc": "pipe::glibc",
+					"/lib64": "pipe::ld"
 					"/pwd": "mount:overlay:."
-					"$PATH": "literal:/pkg/busybox/bin:/pkg/python/bin"
 				},
 				"action": {
-					"script": {
-						"interpreter": "sh",
-						"contents": [
-							"mkdir -p /prefix/",
-							"mkdir /out"
-							"ln -s /pkg/glibc/lib/ /prefix/lib",
-							"ln -s /pkg/glibc/lib/ /lib64",
-							"ln -s /pkg/glibc/lib/ /lib",
-							"cd /pwd",
-							"python3 test.py",
-						]
+					"exec": {
+						"command": ["/pkg/python/bin/python3", "/pwd/test.py"]
 					}
 				},
 				"outputs": {}

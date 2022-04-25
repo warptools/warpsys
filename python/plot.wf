@@ -2,6 +2,8 @@
 	"inputs": {
 		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
 		"src": "catalog:warpsys.org/python:v3.10.2:src"
+		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64",
+		"ld": "catalog:warpsys.org/gnu/glibc:v2.35:ld-amd64"
 	},
 	"steps": {
 		"build": {
@@ -9,6 +11,7 @@
 				"inputs": {
 					"/": "pipe::rootfs",
 					"/src": "pipe::src"
+					"/pkg/glibc": "pipe::glibc"
 				},
 				"action": {
 					"script": {
@@ -18,19 +21,40 @@
 							"mkdir -v build",
 							"cd build",
 							"export SOURCE_DATE_EPOCH=1262304000",
-							"../configure --prefix=/prefix/"
+							"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
 							"make",
 							"make DESTDIR=/out install",
+							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
+							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
+							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libm.so.6 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libpthread.so.0 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libutil.so.1 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib"
 							"find /out -type d -name __pycache__ -exec rm -rf {} +"
 						]
 					}
 				},
 				"outputs": {
 					"out": {
-						"from": "/out/prefix",
+						"from": "/out/warpsys-placeholder-prefix",
 						"packtype": "tar"
 					}
 				}
+			}
+		},
+		"test-run": {
+			"protoformula": {
+				"inputs": {
+					"/lib64": "pipe::ld",
+					"/pkg/python": "pipe:build:out",
+				},
+				"action": {
+					"exec": {
+						"command": ["/pkg/python/bin/python3", "--version"],
+					}
+				},
+				"outputs": {},
 			}
 		}
 	},
