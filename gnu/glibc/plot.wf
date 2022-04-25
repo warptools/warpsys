@@ -20,19 +20,27 @@
 							"make",
 							"make DESTDIR=/out install",
 							"rm /out/prefix/share/info/libc.info-8"
+							"mkdir -vp /out/ld",
+							"cp /out/prefix/lib/ld-linux-x86-64.so.2 /out/ld"
 						]
 					}
 				},
 				"outputs": {
-					"out": {
+					"glibc": {
 						"from": "/out/prefix",
 						"packtype": "tar"
 					}
+					"ld": {
+						"from": "/out/ld",
+						"packtype": "tar"
+					}
+
 				}
 			}
 		}
 	},
 	"outputs": {
-		"amd64": "pipe:build:out"
+		"amd64": "pipe:build:glibc"
+		"ld-amd64": "pipe:build:ld"
 	}
 }

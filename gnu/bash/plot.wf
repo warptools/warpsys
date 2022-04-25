@@ -1,7 +1,9 @@
 {
 	"inputs": {
 		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
-		"src": "catalog:warpsys.org/gnu/bash:v5.1.16:src"
+		"src": "catalog:warpsys.org/gnu/bash:v5.1.16:src",
+		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64",
+		"ld": "catalog:warpsys.org/gnu/glibc:v2.35:ld-amd64"
 	},
 	"steps": {
 		"build": {
@@ -9,27 +11,45 @@
 				"inputs": {
 					"/": "pipe::rootfs",
 					"/src": "pipe::src"
+					"/pkg/glibc": "pipe::glibc"
 				},
 				"action": {
 					"script": {
 						"interpreter": "/bin/sh",
 						"contents": [
-							"cd /src/*",
-							"mkdir -v build",
-							"cd build",
+							"mkdir -vp /build",
+							"cd /build",
 							"export SOURCE_DATE_EPOCH=1262304000",
-							"../configure --prefix=/prefix/"
+							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
 							"make",
-							"make DESTDIR=/out install",
+							"make DESTDIR=/out/ install",
+							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
+							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
+							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib"
 						]
 					}
 				},
 				"outputs": {
 					"out": {
-						"from": "/out/prefix",
+						"from": "/out/warpsys-placeholder-prefix",
 						"packtype": "tar"
 					}
 				}
+			}
+		},
+		"test-run": {
+			"protoformula": {
+				"inputs": {
+					"/lib64": "pipe::ld",
+					"/pkg/bash": "pipe:build:out",
+				},
+				"action": {
+					"exec": {
+						"command": ["/pkg/bash/bin/bash", "--version"],
+					}
+				},
+				"outputs": {},
 			}
 		}
 	},
