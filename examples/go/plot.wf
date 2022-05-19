@@ -1,7 +1,7 @@
 {
 	"inputs": {
 		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64",
+		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
 		"go": "catalog:warpsys.org/go:v1.17.7:linux-amd64",
 	},
 	"steps": {

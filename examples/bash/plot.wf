@@ -1,13 +1,11 @@
 {
 	"inputs": {
-		"ld": "catalog:warpsys.org/gnu/glibc:v2.35:ld-amd64",
-		"bash": "catalog:warpsys.org/gnu/bash:v5.1.16:amd64"
+		"bash": "catalog:warpsys.org/bash:v5.1.16:amd64"
 	},
 	"steps": {
 		"build": {
 			"protoformula": {
 				"inputs": {
-					"/lib64": "pipe::ld",
 					"/pkg/bash": "pipe::bash",
 				},
 				"action": {

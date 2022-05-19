@@ -1,7 +1,7 @@
 {
 	"inputs": {
-		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
-		"src": "catalog:warpsys.org/python:v3.10.4:src",
+		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
+		"src": "catalog:warpsys.org/make:v4.3:src",
 		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
 		"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
 		"ldshim": "catalog:warpsys.org/ldshim:v1.0:amd64"
@@ -12,33 +12,27 @@
 				"inputs": {
 					"/": "pipe::rootfs",
 					"/src": "pipe::src",
-					"/pkg/glibc": "pipe::glibc",
+					"/pkg/glibc": "pipe::glibc"
 					"/pkg/ldshim": "pipe::ldshim"
 				},
 				"action": {
 					"script": {
 						"interpreter": "/bin/sh",
 						"contents": [
-							"cd /src/*",
-							"mkdir -v build",
-							"cd build",
+							"mkdir -vp /prefix/build",
+							"cd /prefix/build",
 							"export SOURCE_DATE_EPOCH=1262304000",
-							"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
+							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
 							"make",
-							"make DESTDIR=/out install",
+							"make DESTDIR=/out/ install",
 							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
 							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
 							"mkdir -vp /out/warpsys-placeholder-prefix/dynbin",
-							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libm.so.6 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libpthread.so.0 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libutil.so.1 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib",
-							"find /out -type d -name __pycache__ -exec rm -rf {} +",
 							"mv /out/warpsys-placeholder-prefix/bin/* /out/warpsys-placeholder-prefix/dynbin",
-							"cp /pkg/ldshim/ldshim /out/warpsys-placeholder-prefix/bin/python3",
-							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /out/warpsys-placeholder-prefix/lib",
-
+							"cp /pkg/ldshim/ldshim /out/warpsys-placeholder-prefix/bin/make",		
+							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /out/warpsys-placeholder-prefix/lib"
 						]
 					}
 				},
@@ -51,20 +45,20 @@
 			}
 		},
 		"test-run": {
-			"protoformula": {
+				"protoformula": {
 				"inputs": {
 					"/lib64": "pipe::ld",
-					"/pkg/python": "pipe:build:out",
+					"/pkg/make": "pipe:build:out",
 				},
 				"action": {
 					"exec": {
-						"command": ["/pkg/python/bin/python3", "--version"],
+						"command": ["/pkg/make/bin/make", "--version"],
 					}
 				},
 				"outputs": {},
 			}
 		}
-	},
+	}
 	"outputs": {
 		"amd64": "pipe:build:out"
 	}

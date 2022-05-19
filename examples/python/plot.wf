@@ -1,14 +1,12 @@
 {
 	"inputs": {
-		"python": "catalog:warpsys.org/python:v3.10.2:amd64"
-		"ld": "catalog:warpsys.org/gnu/glibc:v2.35:ld-amd64"
+		"python": "catalog:warpsys.org/python:v3.10.4:amd64"
 	},
 	"steps": {
 		"build": {
 			"protoformula": {
 				"inputs": {
 					"/pkg/python": "pipe::python",
-					"/lib64": "pipe::ld"
 					"/pwd": "mount:overlay:."
 				},
 				"action": {

@@ -1,0 +1,45 @@
+{
+	"inputs": {
+		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
+		"src": "catalog:warpsys.org/binutils:v2.38:src",
+		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
+	},
+	"steps": {
+		"build": {
+			"protoformula": {
+				"inputs": {
+					"/": "pipe::rootfs",
+					"/src": "pipe::src",
+					"/pkg/glibc": "pipe::glibc"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/bin/sh",
+						"contents": [
+							"cd /src/*",
+							"mkdir -pv /prefix/build",
+							"cd /prefix/build"
+							"export SOURCE_DATE_EPOCH=1262304000",
+							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
+							"make",
+							"make DESTDIR=/out install",
+							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
+							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
+							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib"
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/out/warpsys-placeholder-prefix",
+						"packtype": "tar"
+					}
+				}
+			}
+		}
+	},
+	"outputs": {
+		"amd64": "pipe:build:out"
+	}
+}

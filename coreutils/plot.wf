@@ -1,9 +1,8 @@
 {
 	"inputs": {
-		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
-		"src": "catalog:warpsys.org/gnu/bash:v5.1.16:src",
-		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64",
-		"ld": "catalog:warpsys.org/gnu/glibc:v2.35:ld-amd64"
+		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
+		"src": "catalog:warpsys.org/coreutils:v9.0:src"
+		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
 	},
 	"steps": {
 		"build": {
@@ -17,8 +16,9 @@
 					"script": {
 						"interpreter": "/bin/sh",
 						"contents": [
-							"mkdir -vp /build",
-							"cd /build",
+							"mkdir -vp /prefix/build",
+							"cd /prefix/build",
+							"export FORCE_UNSAFE_CONFIGURE=1",
 							"export SOURCE_DATE_EPOCH=1262304000",
 							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
 							"make",
@@ -36,20 +36,6 @@
 						"packtype": "tar"
 					}
 				}
-			}
-		},
-		"test-run": {
-			"protoformula": {
-				"inputs": {
-					"/lib64": "pipe::ld",
-					"/pkg/bash": "pipe:build:out",
-				},
-				"action": {
-					"exec": {
-						"command": ["/pkg/bash/bin/bash", "--version"],
-					}
-				},
-				"outputs": {},
 			}
 		}
 	},
