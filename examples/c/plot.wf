@@ -1,9 +1,10 @@
 {
 	"inputs": {
 		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"gcc": "catalog:warpsys.org/gnu/gcc:v11.2.0:amd64"
-		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64"
-		"binutils": "catalog:warpsys.org/gnu/binutils:v2.38:amd64"
+		"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64"
+		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
+		"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64"
+		"binutils": "catalog:warpsys.org/binutils:v2.38:amd64"
 	},
 	"steps": {
 		"build": {
@@ -13,18 +14,19 @@
 					"/pkg/gcc": "pipe::gcc",
 					"/pkg/binutils": "pipe::binutils",
 					"/pkg/glibc": "pipe::glibc",
+					"/lib64": "pipe::ld",
 					"/pwd": "mount:overlay:.",
 					"$PATH": "literal:/pkg/busybox/bin:/pkg/gcc/bin:/pkg/binutils/bin"
+					"$LD_LIBRARY_PATH": "literal:/pkg/glibc/lib"
 				},
 				"action": {
 					"script": {
 						"interpreter": "sh",
 						"contents": [
 							"mkdir -p /prefix/",
+							"ln -s /pkg/glibc/lib /prefix/lib",
+							"ln -s /pkg/glibc/lib /lib",
 							"mkdir /out"
-							"ln -s /pkg/glibc/lib/ /prefix/lib",
-							"ln -s /pkg/glibc/lib/ /lib64",
-							"ln -s /pkg/glibc/lib/ /lib",
 							"cd /pwd",
 							"gcc test.c -o/out/hello -I/pkg/glibc/include -L/pkg/glibc/lib",
 							"/out/hello",

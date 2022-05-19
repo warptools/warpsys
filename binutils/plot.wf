@@ -26,7 +26,9 @@
 							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
 							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
 							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
-							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib"
+							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib",
+							"cp /pkg/glibc/lib/libc_nonshared.a /out/warpsys-placeholder-prefix/lib",
+							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /out/warpsys-placeholder-prefix/lib"
 						]
 					}
 				},

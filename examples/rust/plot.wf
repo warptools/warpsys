@@ -1,9 +1,9 @@
 {
 	"inputs": {
 		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"glibc": "catalog:warpsys.org/gnu/glibc:v2.35:amd64"
-		"binutils": "catalog:warpsys.org/gnu/binutils:v2.38:amd64"
-		"gcc": "catalog:warpsys.org/gnu/gcc:v11.2.0:amd64"
+		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
+		"binutils": "catalog:warpsys.org/binutils:v2.38:amd64"
+		"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64"
 		"zlib": "catalog:warpsys.org/zlib:v1.2.12:amd64"
 		"rust": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu"
 	},
