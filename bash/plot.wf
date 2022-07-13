@@ -12,8 +12,6 @@
 				"inputs": {
 					"/": "pipe::rootfs",
 					"/src": "pipe::src"
-					"/pkg/glibc": "pipe::glibc"
-					"/pkg/ldshim": "pipe::ldshim"
 				},
 				"action": {
 					"script": {
@@ -22,17 +20,10 @@
 							"mkdir -vp /build",
 							"cd /build",
 							"export SOURCE_DATE_EPOCH=1262304000",
-							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
+							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
 							"make",
 							"make DESTDIR=/out/ install",
-							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
-							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
-							"mkdir -vp /out/warpsys-placeholder-prefix/dynbin",
-							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib",
-							"mv /out/warpsys-placeholder-prefix/bin/* /out/warpsys-placeholder-prefix/dynbin",
-							"cp /pkg/ldshim/ldshim /out/warpsys-placeholder-prefix/bin/bash",
-							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /out/warpsys-placeholder-prefix/lib"
+							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
 						]
 					}
 				},
@@ -44,22 +35,51 @@
 				}
 			}
 		},
+		"pack": {
+			"protoformula": {
+				"inputs": {
+					"/": "pipe::rootfs",
+					"/pack": "pipe:build:out",
+					"/pkg/ldshim": "pipe::ldshim",
+					"/pkg/glibc": "pipe::glibc"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/bin/sh",
+						"contents": [
+							"mkdir -vp /pack/lib",
+							"mkdir -vp /pack/dynbin",
+							"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
+							"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
+							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
+							"mv /pack/bin/bash /pack/dynbin",
+							"cp /pkg/ldshim/ldshim /pack/bin/bash"
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/pack",
+						"packtype": "tar"
+					}
+				}
+			}
+		},
 		"test-run": {
 			"protoformula": {
 				"inputs": {
-					"/lib64": "pipe::ld",
-					"/pkg/bash": "pipe:build:out",
+					"/pkg/bash": "pipe:pack:out"
 				},
 				"action": {
 					"exec": {
-						"command": ["/pkg/bash/bin/bash", "--version"],
+						"command": ["/pkg/bash/bin/bash", "--version"]
 					}
 				},
-				"outputs": {},
+				"outputs": {}
 			}
 		}
 	},
 	"outputs": {
-		"amd64": "pipe:build:out"
+		"amd64": "pipe:pack:out"
 	}
 }

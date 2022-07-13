@@ -1,16 +1,16 @@
 {
 	"inputs": {
-		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
+		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
 		"src": "catalog:warpsys.org/binutils:v2.38:src",
-		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
+		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
+		"ldshim": "catalog:warpsys.org/ldshim:v1.0:amd64"
 	},
 	"steps": {
 		"build": {
 			"protoformula": {
 				"inputs": {
 					"/": "pipe::rootfs",
-					"/src": "pipe::src",
-					"/pkg/glibc": "pipe::glibc"
+					"/src": "pipe::src"
 				},
 				"action": {
 					"script": {
@@ -18,17 +18,12 @@
 						"contents": [
 							"cd /src/*",
 							"mkdir -pv /prefix/build",
-							"cd /prefix/build"
+							"cd /prefix/build",
 							"export SOURCE_DATE_EPOCH=1262304000",
-							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
+							"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
 							"make",
 							"make DESTDIR=/out install",
-							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
-							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
-							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libc_nonshared.a /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /out/warpsys-placeholder-prefix/lib"
+							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
 						]
 					}
 				},
@@ -39,9 +34,55 @@
 					}
 				}
 			}
+		},
+		"pack": {
+			"protoformula": {
+				"inputs": {
+					"/": "pipe::rootfs",
+					"/pkg/glibc": "pipe::glibc",
+					"/pkg/ldshim": "pipe::ldshim",
+					"/pack": "pipe:build:out"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/bin/sh",
+						"contents": [
+							"mkdir -vp /pack/lib",
+							"mkdir -vp /pack/dynbin",
+							"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
+							"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
+							"cp /pkg/glibc/lib/libc_nonshared.a /pack/lib",
+							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
+							"mv /pack/bin/* /pack/dynbin",
+							"for FILE in /pack/dynbin/*; do cp /pkg/ldshim/ldshim /pack/bin/`basename $FILE`; done"
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/pack",
+						"packtype": "tar"
+					}
+				}
+			}
+		},
+		"test-run": {
+			"protoformula": {
+				"inputs": {
+					"/pkg/busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+					"/pkg/binutils": "pipe:pack:out"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/pkg/busybox/bin/sh",
+						"contents": ["for FILE in /pkg/binutils/bin/*; do $FILE --version; done"]
+					}
+				},
+				"outputs": {}
+			}
 		}
 	},
 	"outputs": {
-		"amd64": "pipe:build:out"
+		"amd64": "pipe:pack:out"
 	}
 }

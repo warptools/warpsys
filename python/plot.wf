@@ -1,6 +1,6 @@
 {
 	"inputs": {
-		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
+		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
 		"src": "catalog:warpsys.org/python:v3.10.4:src",
 		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
 		"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
@@ -11,9 +11,7 @@
 			"protoformula": {
 				"inputs": {
 					"/": "pipe::rootfs",
-					"/src": "pipe::src",
-					"/pkg/glibc": "pipe::glibc",
-					"/pkg/ldshim": "pipe::ldshim"
+					"/src": "pipe::src"
 				},
 				"action": {
 					"script": {
@@ -23,22 +21,10 @@
 							"mkdir -v build",
 							"cd build",
 							"export SOURCE_DATE_EPOCH=1262304000",
-							"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
+							"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
 							"make",
 							"make DESTDIR=/out install",
-							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
-							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
-							"mkdir -vp /out/warpsys-placeholder-prefix/dynbin",
-							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libm.so.6 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libpthread.so.0 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libutil.so.1 /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libdl.so.2 /out/warpsys-placeholder-prefix/lib",
-							"find /out -type d -name __pycache__ -exec rm -rf {} +",
-							"mv /out/warpsys-placeholder-prefix/bin/* /out/warpsys-placeholder-prefix/dynbin",
-							"cp /pkg/ldshim/ldshim /out/warpsys-placeholder-prefix/bin/python3",
-							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /out/warpsys-placeholder-prefix/lib",
-
+							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
 						]
 					}
 				},
@@ -50,22 +36,55 @@
 				}
 			}
 		},
+		"pack": {
+			"protoformula": {
+				"inputs": {
+					"/": "pipe::rootfs",
+					"/pack": "pipe:build:out",
+					"/pkg/glibc": "pipe::glibc",
+					"/pkg/ldshim": "pipe::ldshim"
+				},
+				"action": {
+					"script": {
+						"interpreter": "/bin/sh",
+						"contents": [
+							"mkdir -vp /pack/lib",
+							"mkdir -vp /pack/dynbin",
+							"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
+							"cp /pkg/glibc/lib/libm.so.6 /pack/lib",
+							"cp /pkg/glibc/lib/libpthread.so.0 /pack/lib",
+							"cp /pkg/glibc/lib/libutil.so.1 /pack/lib",
+							"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
+							"find /pack -type d -name __pycache__ -exec rm -rf {} +",
+							"mv /pack/bin/* /pack/dynbin",
+							"cp /pkg/ldshim/ldshim /pack/bin/python3",
+							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
+						]
+					}
+				},
+				"outputs": {
+					"out": {
+						"from": "/pack",
+						"packtype": "tar"
+					}
+				}
+			}
+		},
 		"test-run": {
 			"protoformula": {
 				"inputs": {
-					"/lib64": "pipe::ld",
-					"/pkg/python": "pipe:build:out",
+					"/pkg/python": "pipe:pack:out"
 				},
 				"action": {
 					"exec": {
-						"command": ["/pkg/python/bin/python3", "--version"],
+						"command": ["/pkg/python/bin/python3", "--version"]
 					}
 				},
-				"outputs": {},
+				"outputs": {}
 			}
 		}
 	},
 	"outputs": {
-		"amd64": "pipe:build:out"
+		"amd64": "pipe:pack:out"
 	}
 }
