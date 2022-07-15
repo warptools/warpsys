@@ -1,7 +1,7 @@
 {
 	"inputs": {
 		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
-		"src": "catalog:warpsys.org/ldshim:v1.0:src",
+		"src": "catalog:warpsys.org/ldshim:v1.1:src",
 	},
 	"steps": {
 		"build": {
