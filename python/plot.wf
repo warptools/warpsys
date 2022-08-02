@@ -4,7 +4,7 @@
 		"src": "catalog:warpsys.org/python:v3.10.4:src",
 		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
 		"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
-		"ldshim": "catalog:warpsys.org/ldshim:v1.0:amd64"
+		"ldshim": "catalog:warpsys.org/ldshim:v1.1:amd64"
 	},
 	"steps": {
 		"build": {
@@ -56,8 +56,10 @@
 							"cp /pkg/glibc/lib/libutil.so.1 /pack/lib",
 							"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
 							"find /pack -type d -name __pycache__ -exec rm -rf {} +",
-							"mv /pack/bin/* /pack/dynbin",
+							"mv /pack/bin/python3 /pack/dynbin",
+							"mv /pack/bin/python3.10 /pack/dynbin",
 							"cp /pkg/ldshim/ldshim /pack/bin/python3",
+							"cp /pkg/ldshim/ldshim /pack/bin/python3.10",
 							"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
 						]
 					}
