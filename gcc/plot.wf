@@ -1,55 +1,57 @@
 {
-	"inputs": {
-		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
-		"mpfr": "catalog:warpsys.org/mpfr:v4.1.0:src",
-		"gmp": "catalog:warpsys.org/gmp:v6.2.1:src",
-		"mpc": "catalog:warpsys.org/mpc:v1.2.1:src",
-		"gcc": "catalog:warpsys.org/gcc:v11.2.0:src"
-		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
-		"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64"
-	},
-	"steps": {
-		"build": {
-			"protoformula": {
-				"inputs": {
-					"/": "pipe::rootfs",
-					"/src/mpfr": "pipe::mpfr",
-					"/src/gmp": "pipe::gmp",
-					"/src/mpc": "pipe::mpc",
-					"/src/gcc": "pipe::gcc",
-					"/pkg/glibc": "pipe::glibc"
-				},
-				"action": {
-					"script": {
-						"interpreter": "/bin/sh",
-						"contents": [
-							"cd /src/gcc/*",
-							"cp -vpR -v /src/mpfr/* mpfr"
-							"cp -vpR /src/gmp/* gmp"
-							"cp -vpR /src/mpc/* mpc"
-							"mkdir -vp /prefix/build",
-							"cd /prefix/build",
-							"export SOURCE_DATE_EPOCH=1262304000",
-							"/src/gcc/*/configure --prefix=/warpsys-placeholder-prefix --disable-multilib --enable-languages=c,c++ LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
-							"make",
-							"make DESTDIR=/out/ install",
-							"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
-							"mkdir -vp /out/warpsys-placeholder-prefix/lib",
-							"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
-							"cp /pkg/glibc/lib/libm.so.6 /out/warpsys-placeholder-prefix/lib"
-						]
-					}
-				},
-				"outputs": {
-					"out": {
-						"from": "/out/warpsys-placeholder-prefix",
-						"packtype": "tar"
+	"plot.v1": {
+		"inputs": {
+			"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64"
+			"mpfr": "catalog:warpsys.org/mpfr:v4.1.0:src",
+			"gmp": "catalog:warpsys.org/gmp:v6.2.1:src",
+			"mpc": "catalog:warpsys.org/mpc:v1.2.1:src",
+			"gcc": "catalog:warpsys.org/gcc:v11.2.0:src"
+			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/": "pipe::rootfs",
+						"/src/mpfr": "pipe::mpfr",
+						"/src/gmp": "pipe::gmp",
+						"/src/mpc": "pipe::mpc",
+						"/src/gcc": "pipe::gcc",
+						"/pkg/glibc": "pipe::glibc"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/bin/sh",
+							"contents": [
+								"cd /src/gcc/*",
+								"cp -vpR -v /src/mpfr/* mpfr"
+								"cp -vpR /src/gmp/* gmp"
+								"cp -vpR /src/mpc/* mpc"
+								"mkdir -vp /prefix/build",
+								"cd /prefix/build",
+								"export SOURCE_DATE_EPOCH=1262304000",
+								"/src/gcc/*/configure --prefix=/warpsys-placeholder-prefix --disable-multilib --enable-languages=c,c++ LDFLAGS=-Wl,-rpath=XORIGIN/../lib"
+								"make",
+								"make DESTDIR=/out/ install",
+								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
+								"mkdir -vp /out/warpsys-placeholder-prefix/lib",
+								"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib"
+								"cp /pkg/glibc/lib/libm.so.6 /out/warpsys-placeholder-prefix/lib"
+							]
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/out/warpsys-placeholder-prefix",
+							"packtype": "tar"
+						}
 					}
 				}
 			}
+		},
+		"outputs": {
+			"amd64": "pipe:build:out"
 		}
-	},
-	"outputs": {
-		"amd64": "pipe:build:out"
 	}
 }

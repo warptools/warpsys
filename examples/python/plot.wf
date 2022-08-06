@@ -1,22 +1,24 @@
 {
-	"inputs": {
-		"python": "catalog:warpsys.org/python:v3.10.4:amd64"
-	},
-	"steps": {
-		"build": {
-			"protoformula": {
-				"inputs": {
-					"/pkg/python": "pipe::python",
-					"/pwd": "mount:overlay:."
-				},
-				"action": {
-					"exec": {
-						"command": ["/pkg/python/bin/python3", "/pwd/test.py"]
-					}
-				},
-				"outputs": {}
+	"plot.v1": {
+		"inputs": {
+			"python": "catalog:warpsys.org/python:v3.10.4:amd64"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/python": "pipe::python",
+						"/pwd": "mount:overlay:."
+					},
+					"action": {
+						"exec": {
+							"command": ["/pkg/python/bin/python3", "/pwd/test.py"]
+						}
+					},
+					"outputs": {}
+				}
 			}
-		}
-	},
-	"outputs": {}
+		},
+		"outputs": {}
+	}
 }

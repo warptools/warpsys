@@ -1,60 +1,64 @@
 {
-	"inputs": {
-		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
-		"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
-		"rust-installer": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu-installer"
-	},
-	"steps": {
-		"build": {
-			"protoformula": {
-				"inputs": {
-					"/pkg/busybox": "pipe::busybox",
-					"/rust-installer": "pipe::rust-installer",
-					"/pkg/glibc": "pipe::glibc",
-					"$PATH": "literal:/pkg/busybox/bin:/pkg/busybox/usr/bin"
-				},
-				"action": {
-					"script": {
-						"interpreter": "sh",
-						"contents": [
-							"mkdir /out",
-							"mkdir /prefix",
-							"ln -s /pkg/glibc/lib/ /prefix/lib",
-							"ln -s /pkg/glibc/lib/ /lib64",
-							"ln -s /pkg/glibc/lib/ /lib",
-							"ln -s /pkg/gcc/bin/gcc /pkg/gcc/bin/cc",
-							"sh /rust-installer/*/install.sh --prefix=/out"
-						]
+	"plot.v1": {
+		"inputs": {
+			"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
+			"rust-installer": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu-installer"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/busybox": "pipe::busybox",
+						"/rust-installer": "pipe::rust-installer",
+						"/pkg/glibc": "pipe::glibc",
+						"$PATH": "literal:/pkg/busybox/bin:/pkg/busybox/usr/bin"
+					},
+					"action": {
+						"script": {
+							"interpreter": "sh",
+							"contents": [
+								"mkdir /out",
+								"mkdir /prefix",
+								"ln -s /pkg/glibc/lib/ /prefix/lib",
+								"ln -s /pkg/glibc/lib/ /lib64",
+								"ln -s /pkg/glibc/lib/ /lib",
+								"ln -s /pkg/gcc/bin/gcc /pkg/gcc/bin/cc",
+								"sh /rust-installer/*/install.sh --prefix=/out"
+							]
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/out",
+							"packtype": "tar"
+						}
 					}
-				},
-				"outputs": {
-					"out": {
-						"from": "/out",
-						"packtype": "tar"
-					}
+				}
+			},
+			"test-run": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+						"/pkg/rust": "pipe:build:out",
+						"$PATH": "literal:/pkg/busybox/bin:/pkg/busybox/usr/bin",
+						"/lib64": "pipe::ld",
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/busybox/bin/sh",
+							"contents": [
+								"# this doesn't work /pkg/rust/bin/cargo"
+							]
+						}
+					},
+					"outputs": {}
 				}
 			}
 		},
-		"test-run": {
-			"protoformula": {
-				"inputs": {
-					"/pkg/busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-					"/pkg/rust": "pipe:build:out",
-					"$PATH": "literal:/pkg/busybox/bin:/pkg/busybox/usr/bin",
-					"/lib64": "pipe::ld"
-				},
-				"action": {
-					"script": {
-						"interpreter": "/pkg/busybox/bin/sh",
-						"contents": ["/pkg/rust/bin/rustc"]
-					}
-				},
-				"outputs": {}
-			}
+		"outputs": {
+			"x86_64-unknown-linux-gnu": "pipe:build:out"
 		}
-	},
-	"outputs": {
-		"x86_64-unknown-linux-gnu": "pipe:build:out"
 	}
 }

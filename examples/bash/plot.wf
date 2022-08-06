@@ -1,24 +1,26 @@
 {
-	"inputs": {
-		"bash": "catalog:warpsys.org/bash:v5.1.16:amd64"
-	},
-	"steps": {
-		"build": {
-			"protoformula": {
-				"inputs": {
-					"/pkg/bash": "pipe::bash",
-				},
-				"action": {
-					"script": {
-						"interpreter": "/pkg/bash/bin/bash",
-						"contents": [
-							"echo 'hello from bash!'",
-						]
-					}
-				},
-				"outputs": {}
+	"plot.v1": {
+		"inputs": {
+			"bash": "catalog:warpsys.org/bash:v5.1.16:amd64"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/bash": "pipe::bash",
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/bash/bin/bash",
+							"contents": [
+								"echo 'hello from bash!'",
+							]
+						}
+					},
+					"outputs": {}
+				}
 			}
-		}
-	},
-	"outputs": {}
+		},
+		"outputs": {}
+	}
 }

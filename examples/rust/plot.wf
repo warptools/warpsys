@@ -1,53 +1,55 @@
 {
-	"inputs": {
-		"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-		"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
-		"binutils": "catalog:warpsys.org/binutils:v2.38:amd64"
-		"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64"
-		"zlib": "catalog:warpsys.org/zlib:v1.2.12:amd64"
-		"rust": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu"
-	},
-	"steps": {
-		"build": {
-			"protoformula": {
-				"inputs": {
-					"/pkg/busybox": "pipe::busybox",
-					"/pkg/binutils": "pipe::binutils",
-					"/pkg/rust": "pipe::rust",
-					"/pkg/glibc": "pipe::glibc",
-					"/pkg/gcc": "pipe::gcc",
-					"/pkg/zlib": "pipe::zlib",
-					"/pwd": "mount:overlay:."
-				},
-				"action": {
-					"script": {
-						"interpreter": "/pkg/busybox/bin/sh",
-						"contents": [
-							"export PATH=/pkg/busybox/bin:/pkg/gcc/bin:/pkg/binutils/bin:/pkg/rust/bin:$PATH",
-							"mkdir -p /prefix/",
-							"mkdir /tmp"
-							"ln -s /pkg/glibc/lib/ /prefix/lib",
-							"ln -s /pkg/glibc/lib/ /lib64",
-							"ln -s /pkg/glibc/lib/ /lib",
-							"ln -s /pkg/gcc/bin/gcc /pkg/gcc/bin/cc",
-							"cd /pwd/hello",
-							"LD_LIBRARY_PATH=/pkg/gcc/lib64:/pkg/zlib/lib cargo build --target-dir /build/ --release"
-							"LD_LIBRARY_PATH=/pkg/gcc/lib64/ /build/release/hello"
-							"mkdir /out"
-							"cp /build/release/hello /out"
-						]
-					}
-				},
-				"outputs": {
-					"out": {
-						"packtype": "tar",
-						"from": "/out"
+	"plot.v1": {
+		"inputs": {
+			"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
+			"binutils": "catalog:warpsys.org/binutils:v2.38:amd64"
+			"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64"
+			"zlib": "catalog:warpsys.org/zlib:v1.2.12:amd64"
+			"rust": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/busybox": "pipe::busybox",
+						"/pkg/binutils": "pipe::binutils",
+						"/pkg/rust": "pipe::rust",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/gcc": "pipe::gcc",
+						"/pkg/zlib": "pipe::zlib",
+						"/pwd": "mount:overlay:."
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/busybox/bin/sh",
+							"contents": [
+								"export PATH=/pkg/busybox/bin:/pkg/gcc/bin:/pkg/binutils/bin:/pkg/rust/bin:$PATH",
+								"mkdir -p /prefix/",
+								"mkdir /tmp"
+								"ln -s /pkg/glibc/lib/ /prefix/lib",
+								"ln -s /pkg/glibc/lib/ /lib64",
+								"ln -s /pkg/glibc/lib/ /lib",
+								"ln -s /pkg/gcc/bin/gcc /pkg/gcc/bin/cc",
+								"cd /pwd/hello",
+								"LD_LIBRARY_PATH=/pkg/gcc/lib64:/pkg/zlib/lib cargo build --target-dir /build/ --release"
+								"LD_LIBRARY_PATH=/pkg/gcc/lib64/ /build/release/hello"
+								"mkdir /out"
+								"cp /build/release/hello /out"
+							]
+						}
+					},
+					"outputs": {
+						"out": {
+							"packtype": "tar",
+							"from": "/out"
+						}
 					}
 				}
 			}
+		},
+		"outputs": {
+			"out": "pipe:build:out"
 		}
-	},
-	"outputs": {
-		"out": "pipe:build:out"
 	}
 }

@@ -1,37 +1,39 @@
 {
-	"inputs": {
-		"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
-		"src": "catalog:warpsys.org/ldshim:v1.1:src",
-	},
-	"steps": {
-		"build": {
-			"protoformula": {
-				"inputs": {
-					"/": "pipe::rootfs"
-					"/src": "pipe::src"
-				},
-				"action": {
-					"script": {
-						"interpreter": "/bin/sh",
-						"contents": [
-							"cd /src",
-							"make",
-							"mkdir -vp /out",
-							"cp ldshim /out"
-						],
-						"network": false
-					}
-				},
-				"outputs": {
-					"out": {
-						"from": "/out",
-						"packtype": "tar"
+	"plot.v1": {
+		"inputs": {
+			"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
+			"src": "catalog:warpsys.org/ldshim:v1.1:src",
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/": "pipe::rootfs"
+						"/src": "pipe::src"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/bin/sh",
+							"contents": [
+								"cd /src",
+								"make",
+								"mkdir -vp /out",
+								"cp ldshim /out"
+							],
+							"network": false
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/out",
+							"packtype": "tar"
+						}
 					}
 				}
 			}
+		},
+		"outputs": {
+			"amd64": "pipe:build:out"
 		}
-	},
-	"outputs": {
-		"amd64": "pipe:build:out"
 	}
 }

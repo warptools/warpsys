@@ -1,3 +1,5 @@
 {
-    "name": "warpsys.org/examples/rust"
+    "module.v1": {
+        "name": "warpsys.org/examples/rust"
+    }
 }

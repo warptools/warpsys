@@ -1,3 +1,5 @@
 {
-    "name": "warpsys.org/bash"
+    "module.v1": {
+        "name": "warpsys.org/bash"
+    }
 }
