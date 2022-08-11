@@ -2,7 +2,7 @@
 	"plot.v1": {
 		"inputs": {
 			"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
-			"src": "catalog:warpsys.org/make:v4.3:src",
+			"src": "catalog:warpsys.org/sed:v4.8:src",
 			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
 			"ldshim": "catalog:warpsys.org/ldshim:v1.0:amd64"
 		},
@@ -50,7 +50,7 @@
 								"mkdir -vp /pack/lib",
 								"mkdir -vp /pack/dynbin",
 								"mv /pack/bin/* /pack/dynbin",
-								"cp /pkg/ldshim/ldshim /pack/bin/make",		
+								"cp /pkg/ldshim/ldshim /pack/bin/sed",		
 								"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
 								"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
 								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
@@ -68,11 +68,11 @@
 			"test-run": {
 					"protoformula": {
 					"inputs": {
-						"/pkg/make": "pipe:pack:out"
+						"/pkg/sed": "pipe:pack:out"
 					},
 					"action": {
 						"exec": {
-							"command": ["/pkg/make/bin/make", "--version"]
+							"command": ["/pkg/sed/bin/sed", "--version"]
 						}
 					},
 					"outputs": {}

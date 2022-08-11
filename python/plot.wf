@@ -1,23 +1,48 @@
 {
 	"plot.v1": {
 		"inputs": {
-			"rootfs": "catalog:warpsys.org/debian-bootstrap:bullseye-1646092800:amd64",
 			"src": "catalog:warpsys.org/python:v3.10.4:src",
 			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
 			"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
-			"ldshim": "catalog:warpsys.org/ldshim:v1.1:amd64"
+			"ldshim": "catalog:warpsys.org/ldshim:v1.1:amd64",
+			"make": "catalog:warpsys.org/make:v4.3:amd64",
+			"bash": "catalog:warpsys.org/bash:v5.1.16:amd64",
+			"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64",
+			"grep": "catalog:warpsys.org/grep:v3.7:amd64",
+			"coreutils": "catalog:warpsys.org/coreutils:v9.1:amd64",
+			"binutils": "catalog:warpsys.org/binutils:v2.38:amd64",
+			"sed": "catalog:warpsys.org/sed:v4.8:amd64",
+			"gawk": "catalog:warpsys.org/gawk:v5.1.1:amd64",
+			"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
+			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64"
 		},
 		"steps": {
 			"build": {
 				"protoformula": {
 					"inputs": {
-						"/": "pipe::rootfs",
-						"/src": "pipe::src"
+						"/src": "pipe::src",
+						"/lib64": "pipe::ld",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/make": "pipe::make",
+						"/pkg/bash": "pipe::bash",
+						"/pkg/coreutils": "pipe::coreutils",
+						"/pkg/binutils": "pipe::binutils",
+						"/pkg/gcc": "pipe::gcc",
+						"/pkg/sed": "pipe::sed",
+						"/pkg/grep": "pipe::grep",
+						"/pkg/gawk": "pipe::gawk",
+						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu"
 					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
+							"interpreter": "/pkg/bash/bin/bash",
 							"contents": [
+								"mkdir -p /bin /tmp /prefix /usr/include/",
+								"ln -s /pkg/glibc/lib /prefix/lib",
+								"ln -s /pkg/glibc/lib /lib",
+								"ln -s /pkg/bash/bin/bash /bin/sh",
+								"ln -s /pkg/gcc/bin/cpp /lib/cpp",
 								"cd /src/*",
 								"mkdir -v build",
 								"cd build",
@@ -40,14 +65,16 @@
 			"pack": {
 				"protoformula": {
 					"inputs": {
-						"/": "pipe::rootfs",
 						"/pack": "pipe:build:out",
 						"/pkg/glibc": "pipe::glibc",
-						"/pkg/ldshim": "pipe::ldshim"
+						"/pkg/ldshim": "pipe::ldshim",
+						"/pkg/busybox": "pipe::busybox", 
+						"/pkg/findutils": "pipe::findutils", 
+						"$PATH": "literal:/pkg/busybox/bin:/pkg/findutils/bin"
 					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
+							"interpreter": "/pkg/busybox/bin/sh",
 							"contents": [
 								"mkdir -vp /pack/lib",
 								"mkdir -vp /pack/dynbin",
@@ -56,6 +83,7 @@
 								"cp /pkg/glibc/lib/libpthread.so.0 /pack/lib",
 								"cp /pkg/glibc/lib/libutil.so.1 /pack/lib",
 								"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
+								"cp /pkg/glibc/lib/libcrypt.so.1 /pack/lib",
 								"find /pack -type d -name __pycache__ -exec rm -rf {} +",
 								"mv /pack/bin/python3 /pack/dynbin",
 								"mv /pack/bin/python3.10 /pack/dynbin",

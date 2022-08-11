@@ -52,6 +52,7 @@
 								"mkdir -vp /pack/dynbin",
 								"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
 								"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
+								"cp /pkg/glibc/lib/libpthread.so.0 /pack/lib",
 								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
 								"mv /pack/bin/* /pack/dynbin",
 								"for FILE in /pack/dynbin/*; do cp /pkg/ldshim/ldshim /pack/bin/`basename $FILE`; done"
