@@ -1,19 +1,19 @@
 {
 	"plot.v1": {
 		"inputs": {
-			"src": "catalog:warpsys.org/python:v3.10.4:src",
-			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64",
-			"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64",
-			"ldshim": "catalog:warpsys.org/ldshim:v1.1:amd64",
-			"make": "catalog:warpsys.org/make:v4.3:amd64",
-			"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64",
-			"grep": "catalog:warpsys.org/grep:v3.7:amd64",
-			"coreutils": "catalog:warpsys.org/coreutils:v9.1:amd64",
-			"binutils": "catalog:warpsys.org/binutils:v2.38:amd64",
-			"sed": "catalog:warpsys.org/sed:v4.8:amd64",
-			"gawk": "catalog:warpsys.org/gawk:v5.1.1:amd64",
-			"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64"
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+			"make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
+			"gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64",
+			"grep": "catalog:warpsys.org/bootstrap/grep:v3.7:amd64",
+			"coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
+			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
+			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
+			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
+			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
+			"src": "catalog:warpsys.org/python:v3.10.4:src"
 		},
 		"steps": {
 			"build": {
