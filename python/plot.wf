@@ -47,7 +47,7 @@
 								"mkdir -v build",
 								"cd build",
 								"export SOURCE_DATE_EPOCH=1262304000",
-								"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
+								"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib ARFLAGS=rvD",
 								"make",
 								"make DESTDIR=/out install",
 								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
