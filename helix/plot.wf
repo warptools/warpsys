@@ -1,0 +1,116 @@
+{
+	"plot.v1": {
+		"inputs": {
+			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+			"gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64",
+			"zlib": "catalog:warpsys.org/zlib:v1.2.12:amd64",
+			"git": "catalog:warpsys.org/git:v2.37.2:amd64",
+			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
+			"rust": "catalog:warpsys.org/rust:v1.59.0:x86_64-unknown-linux-gnu",
+			"src": "catalog:warpsys.org/helix:22.05:src"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/busybox": "pipe::busybox",
+						"/pkg/busybox": "pipe::busybox",
+						"/pkg/binutils": "pipe::binutils",
+						"/pkg/rust": "pipe::rust",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/gcc": "pipe::gcc",
+						"/pkg/git": "pipe::git",
+						"/pkg/zlib": "pipe::zlib",
+						"/src": "pipe::src",
+						"$PATH": "literal:/pkg/busybox/bin:/pkg/gcc/bin:/pkg/binutils/bin:/pkg/rust/bin:/pkg/git/bin",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu",
+						"$LIBRARY_PATH": "literal:/pkg/zlib/lib",
+						"$LD_LIBRARY_PATH": "literal:/pkg/gcc/lib64:/pkg/zlib/lib",
+						"$RUST_BACKTRACE": "literal:1",
+						"$RUSTFLAGS": "literal:-C link-args=-Wl,-rpath,XORIGIN/../lib",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/busybox/bin/sh",
+							"contents": [
+								"mkdir -p /prefix/ /usr/include",
+								"mkdir /tmp",
+								"ln -s /pkg/glibc/lib/ /prefix/lib",
+								"ln -s /pkg/glibc/lib/ /lib64",
+								"ln -s /pkg/glibc/lib/ /lib",
+								"ln -s /pkg/gcc/bin/gcc /pkg/gcc/bin/cc",
+								"ln -s /pkg/glibc/include/stdlib.h /usr/include",
+								"cd /src",
+								"cargo build --target-dir /build/ --release"
+							],
+							"network": true
+						}
+					},
+					"outputs": {
+						"out": {
+							"packtype": "tar",
+							"from": "/build"
+						}
+					}
+				}
+			},
+			"pack": {
+				"protoformula": {
+					"inputs": {
+						"/build": "pipe:build:out",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/ldshim": "pipe::ldshim",
+						"/pkg/busybox": "pipe::busybox",
+						"/pkg/sed": "pipe::sed",
+						"/pkg/gcc": "pipe::gcc",
+						"$PATH": "literal:/pkg/busybox/bin"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/busybox/bin/sh",
+							"contents": [
+								"mkdir -vp /pack/lib /pack/bin /pack/dynbin",
+								"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
+								"cp /pkg/glibc/lib/libm.so.6 /pack/lib",
+								"cp /pkg/gcc/lib64/libgcc_s.so.1 /pack/lib",
+								"mv /build/release/hx /pack/dynbin",
+								"/pkg/sed/bin/sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /pack/dynbin/hx",
+								"cp /pkg/ldshim/ldshim /pack/bin/hx",
+								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
+							]
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/pack",
+							"packtype": "tar"
+						}
+					}
+				}
+			},
+			"test-run": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/helix": "pipe:pack:out"
+					},
+					"action": {
+						"exec": {
+							"command": [
+								"/pkg/helix/bin/hx",
+								"--version"
+							]
+						}
+					},
+					"outputs": {}
+				}
+			}
+		},
+		"outputs": {
+			"amd64": "pipe:pack:out"
+		}
+	}
+}
