@@ -82,7 +82,11 @@
 								"mv /pack/bin/perl5.36.0 /pack/dynbin",
 								"cp /pkg/ldshim/ldshim /pack/bin/perl",
 								"cp /pkg/ldshim/ldshim /pack/bin/perl5.36.0",
-								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
+								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
+								"sed -i \"s/\\$config_tag1 = '\\([^ ]\\+\\)*.*/\\$config_tag1 = '\\1'/\" /pack/bin/perlbug /pack/bin/perlthanks"
+								"sed -i \"s/Configuration time:.*//\" /pack/lib/perl5/5.36.0/x86_64-linux/CORE/config.h /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl"
+								"sed -i \"s/cf_time='[^']\\+/cf_time='`date --date='@1262304000'`/\" /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl"
+
 							]
 						}
 					},
