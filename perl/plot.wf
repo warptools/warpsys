@@ -12,7 +12,7 @@
 			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
 			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
-			"src": "catalog:warpsys.org/perl:v5.36.0:src",
+			"src": "catalog:warpsys.org/perl:v5.36.0:src"
 		},
 		"steps": {
 			"build": {
@@ -30,7 +30,7 @@
 						"/pkg/gawk": "pipe::gawk",
 						"/pkg/busybox": "pipe::busybox",
 						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin:/pkg/busybox/bin",
-						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu"
 					},
 					"action": {
 						"script": {
@@ -83,9 +83,12 @@
 								"cp /pkg/ldshim/ldshim /pack/bin/perl",
 								"cp /pkg/ldshim/ldshim /pack/bin/perl5.36.0",
 								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
-								"sed -i \"s/\\$config_tag1 = '\\([^ ]\\+\\)*.*/\\$config_tag1 = '\\1'/\" /pack/bin/perlbug /pack/bin/perlthanks"
-								"sed -i \"s/Configuration time:.*//\" /pack/lib/perl5/5.36.0/x86_64-linux/CORE/config.h /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl"
-								"sed -i \"s/cf_time='[^']\\+/cf_time='`date --date='@1262304000'`/\" /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl"
+								"sed -i \"s/\\$config_tag1 = '\\([^ ]\\+\\)*.*/\\$config_tag1 = '\\1'/\" /pack/bin/perlbug /pack/bin/perlthanks",
+								"sed -i \"s/Configuration time:.*//\" /pack/lib/perl5/5.36.0/x86_64-linux/CORE/config.h /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl",
+								"sed -i \"s/cf_time='[^']\\+/cf_time='`date --date='@1262304000'`/\" /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl",
+								"sed -i \"s/Target system.*//\" /pack/lib/perl5/5.36.0/x86_64-linux/CORE/config.h /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl",
+								"sed -i \"s/myuname='.*/myuname='linux'/\" /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl",
+								"sed -i \"s/[[:digit:]]\\+.[[:digit:]]\\+.[[:digit:]]\\+-[[:digit:]]\\+/linux/\" /pack/lib/perl5/5.36.0/x86_64-linux/Errno.pm /pack/lib/perl5/5.36.0/x86_64-linux/CORE/config.h /pack/lib/perl5/5.36.0/x86_64-linux/Config_heavy.pl /pack/lib/perl5/5.36.0/x86_64-linux/Config.pm"
 
 							]
 						}
