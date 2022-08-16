@@ -1,11 +1,11 @@
 {
 	"plot.v1": {
 		"inputs": {
-			"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64",
-			"gcc": "catalog:warpsys.org/gcc:v11.2.0:amd64"
-			"glibc": "catalog:warpsys.org/glibc:v2.35:amd64"
-			"ld": "catalog:warpsys.org/glibc:v2.35:ld-amd64"
-			"binutils": "catalog:warpsys.org/binutils:v2.38:amd64"
+			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
+			"gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64"
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64"
+			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64"
+			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64"
 		},
 		"steps": {
 			"build": {
