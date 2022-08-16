@@ -47,7 +47,7 @@
 								"mkdir -v build",
 								"cd build",
 								"export SOURCE_DATE_EPOCH=1262304000",
-								"../configure --prefix=/warpsys-placeholder-prefix",
+								"../configure --prefix=/warpsys-placeholder-prefix ARFLAGS=crv",
 								"make",
 								"make DESTDIR=/out install"
 							]
