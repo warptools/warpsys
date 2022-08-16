@@ -22,7 +22,7 @@
 								"mkdir -pv /prefix/build",
 								"cd /prefix/build",
 								"export SOURCE_DATE_EPOCH=1262304000",
-								"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
+								"/src/*/configure --prefix=/warpsys-placeholder-prefix --enable-deterministic-archives LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
 								"make",
 								"make DESTDIR=/out install",
 								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
