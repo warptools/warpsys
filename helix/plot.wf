@@ -67,6 +67,7 @@
 						"/pkg/busybox": "pipe::busybox",
 						"/pkg/sed": "pipe::sed",
 						"/pkg/gcc": "pipe::gcc",
+						"/src": "pipe::src",
 						"$PATH": "literal:/pkg/busybox/bin"
 					},
 					"action": {
@@ -78,6 +79,7 @@
 								"cp /pkg/glibc/lib/libm.so.6 /pack/lib",
 								"cp /pkg/gcc/lib64/libgcc_s.so.1 /pack/lib",
 								"mv /build/release/hx /pack/dynbin",
+								"cp -r /src/runtime /pack/",
 								"/pkg/sed/bin/sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /pack/dynbin/hx",
 								"cp /pkg/ldshim/ldshim /pack/bin/hx",
 								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
