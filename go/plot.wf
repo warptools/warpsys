@@ -1,0 +1,59 @@
+{
+	"plot.v1": {
+		"inputs": {
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+			"gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64",
+			"bash": "catalog:warpsys.org/bash:v5.1.16:amd64",
+			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
+			"go-dl": "catalog:warpsys.org/go:v1.19:linux-amd64-dl",
+			"src": "catalog:warpsys.org/go:v1.19:src"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/src": "pipe::src",
+						"/lib64": "pipe::ld",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/gcc": "pipe::gcc",
+						"/pkg/bash": "pipe::bash",
+						"/pkg/busybox": "pipe::busybox",
+						"/pkg/go-prebuilt": "pipe::go-dl",
+						"$PATH": "literal:/pkg/gcc/bin:/pkg/busybox/bin:/pkg/bash/bin",
+						"$GOROOT_BOOTSTRAP": "literal:/pkg/go-prebuilt/go",
+						"$LD_LIBRARY_PATH": "literal:/pkg/glibc/lib",
+						"$GO_LDFLAGS": "literal:-L /pkg/glibc/lib",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu",
+						"$CGO_ENABLED": "literal:0"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/busybox/bin/sh",
+							"network": true,
+							"contents": [
+								"mkdir -p /tmp /prefix /usr/lib /prefix /pkg/go",
+								"ln -s /pkg/glibc/lib /prefix/lib",
+								"ln -s /pkg/glibc/lib /usr/lib/x86_64-linux-gnu",
+								"cd /src/go/src",
+								"bash make.bash",
+								"cp -r ../bin/ /pkg/go",
+								"cp -r ../src/ /pkg/go",
+								"cp -r ../pkg/ /pkg/go"
+							]
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/pkg/go",
+							"packtype": "tar"
+						}
+					}
+				}
+			}
+		},
+		"outputs": {
+			"linux-amd64": "pipe:build:out"
+		}
+	}
+}

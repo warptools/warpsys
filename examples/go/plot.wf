@@ -2,45 +2,34 @@
 	"plot.v1": {
 		"inputs": {
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
-			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
-			"go": "catalog:warpsys.org/go:v1.17.7:linux-amd64",
+			"go": "catalog:warpsys.org/go:v1.19:linux-amd64"
 		},
 		"steps": {
 			"build": {
 				"protoformula": {
 					"inputs": {
 						"/pkg/busybox": "pipe::busybox",
-						"/pkg/glibc": "pipe::glibc",
 						"/pkg/go": "pipe::go",
-						"/pwd": "mount:overlay:."
+						"/pwd": "mount:overlay:.",
+						"$PATH": "literal:/pkg/busybox/bin:/pkg/go/bin",
+						"$CGO_ENABLED": "literal:0"
 					},
 					"action": {
 						"script": {
-							"interpreter": "/pkg/busybox/bin/sh",
+							"interpreter": "/pkg/busybox/bin/sh", 
 							"contents": [
-								"export PATH=/pkg/go/go/bin:/pkg/busybox/bin:$PATH",
-								"mkdir /out"
-								"mkdir -p /prefix/",
 								"mkdir /tmp",
-								"ln -s /pkg/glibc/lib/ /prefix/lib",
-								"ln -s /pkg/glibc/lib/ /lib64",
 								"cd /pwd",
-								"go build -o /out/test test.go",
-								"/out/test",
+								"go run test.go"
 							]
 						}
 					},
 					"outputs": {
-						"out": {
-							"from": "/out",
-							"packtype": "tar"
-						}
 					}
 				}
 			}
 		},
 		"outputs": {
-			"amd64": "pipe:build:out"
 		}
 	}
 }
