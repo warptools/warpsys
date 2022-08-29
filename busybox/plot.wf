@@ -1,0 +1,94 @@
+{
+	"plot.v1": {
+		"inputs": {
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+			"make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
+			"gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64",
+			"grep": "catalog:warpsys.org/bootstrap/grep:v3.7:amd64",
+			"coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
+			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
+			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
+			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
+			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
+			"diffutils": "catalog:warpsys.org/diffutils:v3.8:amd64",
+			"src": "catalog:warpsys.org/busybox:v1.35.0:src"
+		},
+		"steps": {
+			"build": {
+				"protoformula": {
+					"inputs": {
+						"/src": "pipe::src",
+						"/lib64": "pipe::ld",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/make": "pipe::make",
+						"/pkg/coreutils": "pipe::coreutils",
+						"/pkg/binutils": "pipe::binutils",
+						"/pkg/findutils": "pipe::findutils",
+						"/pkg/diffutils": "pipe::diffutils",
+						"/pkg/gcc": "pipe::gcc",
+						"/pkg/sed": "pipe::sed",
+						"/pkg/grep": "pipe::grep",
+						"/pkg/gawk": "pipe::gawk",
+						"/pkg/busybox": "pipe::busybox",
+						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin:/pkg/busybox/bin:/pkg/findutils/bin:/pkg/diffutils/bin",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/pkg/busybox/bin/sh",
+							"contents": [
+								"mkdir -p /bin /tmp /prefix /usr/include/",
+								"ln -s /pkg/glibc/lib /prefix/lib",
+								"ln -s /pkg/glibc/lib /lib",
+								"ln -s /pkg/busybox/bin/sh /bin/sh",
+								"ln -s /pkg/gcc/bin/cpp /lib/cpp",
+								"cd /src/*",
+								"make defconfig",
+								"sed -e 's/.*CONFIG_SELINUXENABLED.*/CONFIG_SELINUXENABLED=n/' -i .config",
+								"sed -e 's/.*CONFIG_NANDWRITE.*/CONFIG_NANDWRITE=n/' -i .config",
+								"sed -e 's/.*CONFIG_NANDDUMP.*/CONFIG_NANDDUMP=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIATTACH.*/CONFIG_UBIATTACH=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIDETACH.*/CONFIG_UBIDETACH=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIMKVOL.*/CONFIG_UBIMKVOL=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIRMVOL.*/CONFIG_UBIRMVOL=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIRSVOL.*/CONFIG_UBIRSVOL=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIUPDATEVOL.*/CONFIG_UBIUPDATEVOL=n/' -i .config",
+								"sed -e 's/.*CONFIG_UBIRENAME.*/CONFIG_UBIRENAME=n/' -i .config",
+								"make",
+								"LDFLAGS='--static' make CONFIG_PREFIX=/out install"
+							]
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/out",
+							"packtype": "tar"
+						}
+					}
+				}
+			},
+			"test-run": {
+				"protoformula": {
+					"inputs": {
+						"/pkg/busybox": "pipe:build:out"
+					},
+					"action": {
+						"exec": {
+							"command": [
+								"/pkg/busybox/bin/busybox"
+							]
+						}
+					},
+					"outputs": {}
+				}
+			}
+		},
+		"outputs": {
+			"amd64-static": "pipe:build:out"
+		}
+	}
+}
