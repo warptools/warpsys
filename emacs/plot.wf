@@ -16,7 +16,7 @@
 			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
 			"perl": "catalog:warpsys.org/perl:v5.36.0:amd64",
 			"texinfo": "catalog:warpsys.org/texinfo:v6.8:amd64",
-			"src": "catalog:warpsys.org/emacs:v28.1:src"
+			"src": "catalog:warpsys.org/emacs:v28.2:src"
 		},
 		"steps": {
 			"build": {
@@ -97,6 +97,7 @@
 								"mv /pack/bin/emacs /pack/dynbin",
 								"cp /pkg/ldshim/ldshim /pack/bin/emacs",
 								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
+								"rm /pack/libexec/emacs/28.2/x86_64-pc-linux-gnu/emacs.pdmp"
 							]
 						}
 					},

@@ -80,7 +80,8 @@
 								"cp /pkg/glibc/lib/libm.so.6 /pack/lib",
 								"mv /pack/bin/bash /pack/dynbin",
 								"cp /pkg/ldshim/ldshim /pack/bin/bash",
-								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
+								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
+								"rm -rf /pack/lib/bash /pack/lib/pkgconfig /pack/include /pack/share"
 							]
 						}
 					},
