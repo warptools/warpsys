@@ -12,7 +12,7 @@
 			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
 			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
-			"src": "catalog:warpsys.org/findutils:v4.9.0:src",
+			"src": "catalog:warpsys.org/findutils:v4.9.0:src"
 		},
 		"steps": {
 			"build": {
@@ -45,7 +45,7 @@
 								"mkdir -v build",
 								"cd build",
 								"export SOURCE_DATE_EPOCH=1262304000",
-								"../configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib ARFLAGS=rvD",
+								"../configure --prefix=/warpsys-placeholder-prefix CFLAGS=\"-march=x86-64 -mtune=generic -DD_INO_IN_DIRENT\" LDFLAGS=-Wl,-rpath=XORIGIN/../lib ARFLAGS=rvD",
 								"make",
 								"make DESTDIR=/out install",
 								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
