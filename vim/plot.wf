@@ -13,7 +13,6 @@
 			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
 			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
-			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
 			"src": "catalog:warpsys.org/vim:v9.0.0217:src"
 		},
 		"steps": {
@@ -32,7 +31,6 @@
 						"/pkg/ncurses": "pipe::ncurses",
 						"/pkg/gawk": "pipe::gawk",
 						"/pkg/busybox": "pipe::busybox",
-						"/pkg/findutils": "pipe::findutils",
 						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin:/pkg/busybox/bin",
 						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu:/pkg/ncurses/include",
 						"$LIBRARY_PATH": "literal:/pkg/ncurses/lib"

@@ -12,7 +12,6 @@
 			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
 			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
-			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
 			"src": "catalog:warpsys.org/zlib:v1.2.13:src"
 		},
 		"steps": {
