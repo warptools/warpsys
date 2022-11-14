@@ -1,3 +1,3 @@
 [submodule ".warpforge/catalogs/default"]
 	path = .warpforge/catalogs/default
-	url = git@github.com:warpsys/catalog.git
+	url = git@github.com:warptools/warpsys-catalog.git
