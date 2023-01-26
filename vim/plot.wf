@@ -12,7 +12,7 @@
 			"ncurses": "catalog:warpsys.org/ncurses:v6.3-2:amd64",
 			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
 			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
-			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0-2:amd64",
+			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
 			"src": "catalog:warpsys.org/vim:v9.0.0217:src"
 		},
 		"steps": {
