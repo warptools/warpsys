@@ -14,7 +14,7 @@
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
 			"findutils": "catalog:warpsys.org/findutils:v4.9.0-2:amd64",
 			"pkg-config": "catalog:warpsys.org/pkg-config:v0.29.2:amd64",
-			"src": "catalog:warpsys.org/python:v3.11.0:src",
+			"src": "catalog:warpsys.org/python:v3.11.1:src",
 			"zlib": "catalog:warpsys.org/zlib:v1.2.13-2:amd64"
 		},
 		"steps": {
