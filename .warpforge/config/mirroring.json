@@ -1,0 +1,13 @@
+{
+	"mirroring.v1": {
+		"ca+https://warpsys-wares.s3.fr-par.scw.cloud": {
+			"pushConfig": {
+				"s3": {
+					"endpoint": "https://s3.fr-par.scw.cloud",
+					"region": "fr-par",
+					"bucket": "warpsys-wares"
+				}
+			}
+		}
+	}
+}

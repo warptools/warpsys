@@ -13,7 +13,9 @@
 			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
 			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
 			"findutils": "catalog:warpsys.org/findutils:v4.9.0-2:amd64",
-			"src": "catalog:warpsys.org/python:v3.10.4:src"
+			"pkg-config": "catalog:warpsys.org/pkg-config:v0.29.2:amd64",
+			"src": "catalog:warpsys.org/python:v3.11.1:src",
+			"zlib": "catalog:warpsys.org/zlib:v1.2.13-2:amd64"
 		},
 		"steps": {
 			"build": {
@@ -30,8 +32,12 @@
 						"/pkg/grep": "pipe::grep",
 						"/pkg/gawk": "pipe::gawk",
 						"/pkg/busybox": "pipe::busybox",
-						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin:/pkg/busybox/bin",
-						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu"
+						"/pkg/zlib": "pipe::zlib",
+						"/pkg/pkg-config": "pipe::pkg-config",
+						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin:/pkg/busybox/bin:/pkg/pkg-config/bin",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu:/pkg/zlib/include",
+						"$PKG_CONFIG_PATH": "literal:/pkg/zlib/lib/pkgconfig",
+						"$CPPFLAGS": "literal:-I/pkg/zlib/include",
 					},
 					"action": {
 						"script": {
@@ -42,6 +48,9 @@
 								"ln -s /pkg/glibc/lib /lib",
 								"ln -s /pkg/busybox/bin/sh /bin/sh",
 								"ln -s /pkg/gcc/bin/cpp /lib/cpp",
+								"mkdir -p /usr/lib/x86_64-linux-gnu",
+								"cp -r /pkg/zlib/lib/* /usr/lib",
+								"cp -r /pkg/zlib/include/* /usr/include",
 								"cd /src/*",
 								"mkdir -v build",
 								"cd build",
