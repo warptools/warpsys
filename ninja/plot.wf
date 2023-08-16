@@ -1,0 +1,60 @@
+{
+	"plot.v1": {
+		"inputs": {
+			"rootfs": "catalog:warpsys.org/busybox:v1.35.0:amd64-static",
+			"src": "catalog:github.com/ninja-build/ninja:v1.11.1:src",
+			"python": "catalog:warpsys.org/python:v3.10.4-2:amd64",
+			"gcc": "ware:tar:5PZ8PsEk3ZvD2HJaFLRRFnbNmEN7yMLjNAWWgQ9NEbGt5EboPSzvk1fQaaEyN1XRKv",
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+			"make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
+			"coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
+			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+			"bash": "catalog:warpsys.org/bash:v5.1.16-2:amd64",
+			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64"
+		},
+		"steps": {
+			"ninja-build": {
+				"protoformula": {
+					"inputs": {
+						"/": "pipe::rootfs",
+						"/opt/python": "pipe::python",
+						"/opt/src": "pipe::src",
+						"/opt/gcc": "pipe::gcc",
+						"/opt/ld": "pipe::ld",
+						"/opt/ldshim": "pipe::ldshim",
+						"/opt/coreutils": "pipe::coreutils",
+						"/opt/glibc": "pipe::glibc",
+						"/opt/make": "pipe::make",
+						"/opt/binutils": "pipe::binutils",
+						"/opt/bash": "pipe::bash",
+						"/opt/sed": "pipe::sed"
+						"$PATH": "literal::/bin:/opt/sed/bin:/opt/gcc/bin:/opt/python/bin:/opt/binutils/bin:/opt/bash/bin:/opt/glibc/bin:/opt/make/bin:/opt/binutils/bin:/opt/coreutils/bin",
+						"$CPATH": "literal::/opt/glibc/include:/opt/glibc/include/x86_64-linux-gnu",
+						"$CPLUS_INCLUDE_PATH": "literal::/opt/gcc/include/c++/11.2.0"
+					},
+					"action": {
+						"script": {
+							"interpreter": "/bin/sh",
+							"contents": [
+								"cd /opt/src",
+								"python3 ./configure.py --bootstrap",
+							],
+							"network": false
+						}
+					},
+					"outputs": {
+						"out": {
+							"from": "/output",
+							"packtype": "tar"
+						}
+					}
+				}
+			}
+		},
+		"outputs": {
+			"output": "pipe:ninja-build:out"
+		}
+	}
+}
