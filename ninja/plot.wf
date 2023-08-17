@@ -1,60 +1,53 @@
 {
 	"plot.v1": {
-		"inputs": {
-			"rootfs": "catalog:warpsys.org/busybox:v1.35.0:amd64-static",
-			"src": "catalog:github.com/ninja-build/ninja:v1.11.1:src",
-			"python": "catalog:warpsys.org/python:v3.10.4-2:amd64",
-			"gcc": "ware:tar:5PZ8PsEk3ZvD2HJaFLRRFnbNmEN7yMLjNAWWgQ9NEbGt5EboPSzvk1fQaaEyN1XRKv",
-			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
-			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
-			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
-			"make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
-			"coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
-			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
-			"bash": "catalog:warpsys.org/bash:v5.1.16-2:amd64",
-			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64"
-		},
+		"inputs": {},
+		"outputs": {},
 		"steps": {
-			"ninja-build": {
+			"build": {
 				"protoformula": {
-					"inputs": {
-						"/": "pipe::rootfs",
-						"/opt/python": "pipe::python",
-						"/opt/src": "pipe::src",
-						"/opt/gcc": "pipe::gcc",
-						"/opt/ld": "pipe::ld",
-						"/opt/ldshim": "pipe::ldshim",
-						"/opt/coreutils": "pipe::coreutils",
-						"/opt/glibc": "pipe::glibc",
-						"/opt/make": "pipe::make",
-						"/opt/binutils": "pipe::binutils",
-						"/opt/bash": "pipe::bash",
-						"/opt/sed": "pipe::sed"
-						"$PATH": "literal::/bin:/opt/sed/bin:/opt/gcc/bin:/opt/python/bin:/opt/binutils/bin:/opt/bash/bin:/opt/glibc/bin:/opt/make/bin:/opt/binutils/bin:/opt/coreutils/bin",
-						"$CPATH": "literal::/opt/glibc/include:/opt/glibc/include/x86_64-linux-gnu",
-						"$CPLUS_INCLUDE_PATH": "literal::/opt/gcc/include/c++/11.2.0"
-					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
 							"contents": [
-								"cd /opt/src",
-								"python3 ./configure.py --bootstrap",
+								"mkdir -p /tmp /prefix /usr/include/",
+								"ln -s /pkg/glibc/lib /prefix/lib",
+								"ln -s /pkg/glibc/lib /lib",
+								"ln -s /pkg/busybox/bin /bin",
+								"ln -s /pkg/gcc/bin/cpp /lib/cpp",
+								"cd /src",
+								"python3 ./configure.py --bootstrap"
 							],
-							"network": false
+							"interpreter": "/pkg/busybox/bin/sh"
 						}
+					},
+					"inputs": {
+						"$ARFLAGS": "literal:rvD",
+						"$CPATH": "literal:/pkg/glibc/include:/pkg/busybox/include:/pkg/ldshim/include:/pkg/make/include:/pkg/gcc/include:/pkg/coreutils/include:/pkg/binutils/include:/pkg/python/include:/pkg/ld/include:/pkg/bash/include:/pkg/sed/include:/pkg/findutils/include:/pkg/glibc/include/x86_64-linux-gnu:/pkg/glibc/include/x86_64-linux-gnu/bits:/pkg/glibc/include/x86_64-linux-gnu/asm:",
+						"$LDFLAGS": "literal:-W1,-rpath=XORIGIN/../lib",
+						"$LD_LIBRARY_PATH": "literal:/pkg/glibc/lib:/pkg/busybox/lib:/pkg/ldshim/lib:/pkg/make/lib:/pkg/gcc/lib:/pkg/coreutils/lib:/pkg/binutils/lib:/pkg/python/lib:/pkg/ld/lib:/pkg/bash/lib:/pkg/sed/lib:/pkg/findutils/lib:",
+						"$PATH": "literal:/pkg/glibc/bin:/pkg/busybox/bin:/pkg/ldshim/bin:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/python/bin:/pkg/ld/bin:/pkg/bash/bin:/pkg/sed/bin:/pkg/findutils/bin:",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000",
+						"/pkg/bash": "catalog:warpsys.org/bash:v5.1.16-2:amd64",
+						"/pkg/binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+						"/pkg/busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64-static",
+						"/pkg/coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
+						"/pkg/findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
+						"/pkg/gcc": "ware:tar:5PZ8PsEk3ZvD2HJaFLRRFnbNmEN7yMLjNAWWgQ9NEbGt5EboPSzvk1fQaaEyN1XRKv",
+						"/pkg/glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+						"/pkg/ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+						"/pkg/ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+						"/pkg/make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
+						"/pkg/python": "catalog:warpsys.org/python:v3.10.4-2:amd64",
+						"/pkg/sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
+						"/src": "catalog:github.com/ninja-build/ninja:v1.11.1:src"
 					},
 					"outputs": {
 						"out": {
-							"from": "/output",
+							"from": "/out/warpsys-place-holder-prefix",
 							"packtype": "tar"
 						}
 					}
 				}
 			}
-		},
-		"outputs": {
-			"output": "pipe:ninja-build:out"
 		}
 	}
 }
