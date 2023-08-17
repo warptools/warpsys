@@ -32,7 +32,7 @@ def build_step():
 	ldpathstr = "literal:"
 	for alias, dep in dependencies.items():
 		path = "/pkg/"+alias
-		inputs[path] = dep
+		inputs[path] = "pipe::"+alias
 		pathstr += path + "/bin:"
 		cpathstr += path + "/include:"
 		ldpathstr += path + "/lib:"
@@ -68,4 +68,4 @@ def build_step():
 	return proto(inputs, action, outputs)
 	
 
-result = plot(steps={"build": build_step()}) 
+result = plot(inputs=dependencies, steps={"build": build_step()}) 

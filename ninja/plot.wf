@@ -1,6 +1,19 @@
 {
 	"plot.v1": {
-		"inputs": {},
+		"inputs": {
+			"bash": "catalog:warpsys.org/bash:v5.1.16-2:amd64",
+			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+			"busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64-static",
+			"coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
+			"findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
+			"gcc": "ware:tar:5PZ8PsEk3ZvD2HJaFLRRFnbNmEN7yMLjNAWWgQ9NEbGt5EboPSzvk1fQaaEyN1XRKv",
+			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+			"make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
+			"python": "catalog:warpsys.org/python:v3.10.4-2:amd64",
+			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64"
+		},
 		"outputs": {},
 		"steps": {
 			"build": {
@@ -26,18 +39,18 @@
 						"$LD_LIBRARY_PATH": "literal:/pkg/glibc/lib:/pkg/busybox/lib:/pkg/ldshim/lib:/pkg/make/lib:/pkg/gcc/lib:/pkg/coreutils/lib:/pkg/binutils/lib:/pkg/python/lib:/pkg/ld/lib:/pkg/bash/lib:/pkg/sed/lib:/pkg/findutils/lib:",
 						"$PATH": "literal:/pkg/glibc/bin:/pkg/busybox/bin:/pkg/ldshim/bin:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/python/bin:/pkg/ld/bin:/pkg/bash/bin:/pkg/sed/bin:/pkg/findutils/bin:",
 						"$SOURCE_DATE_EPOCH": "literal:1262304000",
-						"/pkg/bash": "catalog:warpsys.org/bash:v5.1.16-2:amd64",
-						"/pkg/binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
-						"/pkg/busybox": "catalog:warpsys.org/busybox:v1.35.0:amd64-static",
-						"/pkg/coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
-						"/pkg/findutils": "catalog:warpsys.org/findutils:v4.9.0:amd64",
-						"/pkg/gcc": "ware:tar:5PZ8PsEk3ZvD2HJaFLRRFnbNmEN7yMLjNAWWgQ9NEbGt5EboPSzvk1fQaaEyN1XRKv",
-						"/pkg/glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
-						"/pkg/ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
-						"/pkg/ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
-						"/pkg/make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
-						"/pkg/python": "catalog:warpsys.org/python:v3.10.4-2:amd64",
-						"/pkg/sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
+						"/pkg/bash": "pipe::bash",
+						"/pkg/binutils": "pipe::binutils",
+						"/pkg/busybox": "pipe::busybox",
+						"/pkg/coreutils": "pipe::coreutils",
+						"/pkg/findutils": "pipe::findutils",
+						"/pkg/gcc": "pipe::gcc",
+						"/pkg/glibc": "pipe::glibc",
+						"/pkg/ld": "pipe::ld",
+						"/pkg/ldshim": "pipe::ldshim",
+						"/pkg/make": "pipe::make",
+						"/pkg/python": "pipe::python",
+						"/pkg/sed": "pipe::sed",
 						"/src": "catalog:github.com/ninja-build/ninja:v1.11.1:src"
 					},
 					"outputs": {
