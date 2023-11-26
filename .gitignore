@@ -1,0 +1,21 @@
+# note: this file and the '.stignore' file are closely related.
+
+# don't save large assets to git.
+/.warpforge/cache/
+/.warpforge/warehouse/
+
+# memoization shouldn't be shared by default either.
+/.warpforge/memos/
+
+# definitely don't version or share the working dirs used at runtime.
+/.warpforge/runc-root/
+
+# the catalogs *should* be managed... but not by git.
+/.warpforge/catalogs/
+
+# as a loose convention, these file paths are usable by others for notes:
+/_*notes*.md
+/_swap/
+
+# if you're using syncthing during development, that's not git's business:
+/.stfolder
