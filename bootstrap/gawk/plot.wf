@@ -1,31 +1,27 @@
 {
 	"plot.v1": {
-		"inputs": {
-			"rootfs": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
-			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
-			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
-			"src": "catalog:warpsys.org/gawk:v5.1.1:src"
-		},
+		"inputs": {},
+		"outputs": {},
 		"steps": {
 			"build": {
 				"protoformula": {
-					"inputs": {
-						"/": "pipe::rootfs",
-						"/src": "pipe::src"
-					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
 							"contents": [
-								"mkdir -vp /prefix/build",
-								"cd /prefix/build",
-								"export SOURCE_DATE_EPOCH=1262304000",
-								"/src/*/configure --prefix=/warpsys-placeholder-prefix LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
+								"cd /src/*",
+								"./configure --prefix=/warpsys-placeholder-prefix ",
 								"make",
-								"make DESTDIR=/out/ install",
-								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*"
-							]
+								"make DESTDIR=/out install"
+							],
+							"interpreter": "/bin/sh"
 						}
+					},
+					"inputs": {
+						"$ARFLAGS": "literal:rvD",
+						"$LDFLAGS": "literal:-Wl,-rpath=XORIGIN/../lib",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000",
+						"/": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
+						"/src": "catalog:warpsys.org/gawk:v5.1.1:src"
 					},
 					"outputs": {
 						"out": {
@@ -37,28 +33,31 @@
 			},
 			"pack": {
 				"protoformula": {
-					"inputs": {
-						"/": "pipe::rootfs",
-						"/pack": "pipe:build:out",
-						"/pkg/glibc": "pipe::glibc",
-						"/pkg/ldshim": "pipe::ldshim"
-					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
 							"contents": [
 								"mkdir -vp /pack/lib",
 								"mkdir -vp /pack/dynbin",
-								"mv /pack/bin/gawk /pack/dynbin",
+								"cp /pkg/warpsys.org/bootstrap/glibc/lib/ld-linux-x86-64.so.2 /pack/lib",
+								"cp /pkg/warpsys.org/bootstrap/glibc/lib/libc.so.6 /pack/lib",
+								"cp /pkg/warpsys.org/bootstrap/glibc/lib/libdl.so.2 /pack/lib",
+								"cp /pkg/warpsys.org/bootstrap/glibc/lib/libpthread.so.0 /pack/lib",
 								"mv /pack/bin/awk /pack/dynbin",
-								"cp /pkg/ldshim/ldshim /pack/bin/gawk",		
-								"cp /pkg/ldshim/ldshim /pack/bin/awk",		
-								"cp /pkg/glibc/lib/libc.so.6 /pack/lib",
-								"cp /pkg/glibc/lib/libdl.so.2 /pack/lib",
-								"cp /pkg/glibc/lib/libm.so.6 /pack/lib",
-								"cp /pkg/glibc/lib/ld-linux-x86-64.so.2 /pack/lib"
-							]
+								"cp /pkg/warpsys.org/bootstrap/ldshim/ldshim /pack/bin/awk",
+								"mv /pack/bin/gawk /pack/dynbin",
+								"cp /pkg/warpsys.org/bootstrap/ldshim/ldshim /pack/bin/gawk",
+								"mv /pack/bin/gawk-5.1.1 /pack/dynbin",
+								"cp /pkg/warpsys.org/bootstrap/ldshim/ldshim /pack/bin/gawk-5.1.1",
+								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /pack/dynbin/*"
+							],
+							"interpreter": "/bin/sh"
 						}
+					},
+					"inputs": {
+						"/": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
+						"/pack": "pipe:build:out",
+						"/pkg/warpsys.org/bootstrap/glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+						"/pkg/warpsys.org/bootstrap/ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64"
 					},
 					"outputs": {
 						"out": {
@@ -67,23 +66,7 @@
 						}
 					}
 				}
-			},
-			"test-run": {
-					"protoformula": {
-					"inputs": {
-						"/pkg/gawk": "pipe:pack:out"
-					},
-					"action": {
-						"exec": {
-							"command": ["/pkg/gawk/bin/gawk", "--version"]
-						}
-					},
-					"outputs": {}
-				}
 			}
-		},
-		"outputs": {
-			"amd64": "pipe:pack:out"
 		}
 	}
 }

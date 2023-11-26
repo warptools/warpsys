@@ -1,5 +1,5 @@
 {
-    "module.v1": {
-        "name": "warpsys.org/busybox"
-    }
+	"module.v1": {
+		"name": "warpsys.org/busybox"
+	}
 }

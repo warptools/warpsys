@@ -1,45 +1,41 @@
 {
 	"plot.v1": {
-		"inputs": {
-			"rootfs": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
-			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
-			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
-			"mpfr": "catalog:warpsys.org/mpfr:v4.1.0:src",
-			"gmp": "catalog:warpsys.org/gmp:v6.2.1:src",
-			"mpc": "catalog:warpsys.org/mpc:v1.2.1:src",
-			"gcc": "catalog:warpsys.org/gcc:v11.2.0:src"
+		"inputs": {},
+		"outputs": {
+			"out": "pipe:pack:out"
 		},
 		"steps": {
 			"build": {
 				"protoformula": {
-					"inputs": {
-						"/": "pipe::rootfs",
-						"/src/mpfr": "pipe::mpfr",
-						"/src/gmp": "pipe::gmp",
-						"/src/mpc": "pipe::mpc",
-						"/src/gcc": "pipe::gcc",
-						"/pkg/glibc": "pipe::glibc"
-					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
 							"contents": [
-								"cd /src/gcc/*",
-								"cp -vpR -v /src/mpfr/* mpfr",
-								"cp -vpR /src/gmp/* gmp",
-								"cp -vpR /src/mpc/* mpc",
-								"mkdir -vp /prefix/build",
+								"set -eu",
+								"export BOOT_LDFLAGS=\"$LDFLAGS\"",
+								"export LDFLAGS_FOR_TARGET=\"$LDFLAGS\"",
+								"cd /src/*",
+								"cp -vpR -v /pkg/warpsys.org/mpfr/* mpfr",
+								"cp -vpR -v /pkg/warpsys.org/gmp/* gmp",
+								"cp -vpR -v /pkg/warpsys.org/mpc/* mpc",
+								"mkdir -p /prefix/build",
+								"echo \"ld -rpath=XORIGIN/../lib \\$@\" > /prefix/cursed-ld ; chmod +x /prefix/cursed-ld",
 								"cd /prefix/build",
-								"export SOURCE_DATE_EPOCH=1262304000",
-								"/src/gcc/*/configure --prefix=/warpsys-placeholder-prefix --disable-multilib --enable-languages=c,c++ LDFLAGS=-Wl,-rpath=XORIGIN/../lib",
+								"/src/*/configure --prefix=/warpsys-placeholder-prefix --disable-bootstrap --disable-multilib --enable-languages=c,c++ --with-ld=/prefix/cursed-ld LDFLAGS=$LDFLAGS",
 								"make",
-								"make DESTDIR=/out/ install",
-								"sed -i '0,/XORIGIN/{s/XORIGIN/$ORIGIN/}' /out/warpsys-placeholder-prefix/bin/*",
-								"mkdir -vp /out/warpsys-placeholder-prefix/lib",
-								"cp /pkg/glibc/lib/libc.so.6 /out/warpsys-placeholder-prefix/lib",
-								"cp /pkg/glibc/lib/libm.so.6 /out/warpsys-placeholder-prefix/lib"
-							]
+								"make DESTDIR=/out install"
+							],
+							"interpreter": "/bin/sh"
 						}
+					},
+					"inputs": {
+						"$ARFLAGS": "literal:rvD",
+						"$LDFLAGS": "literal:-Wl,-rpath=XORIGIN/../lib",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000",
+						"/": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
+						"/pkg/warpsys.org/gmp": "catalog:warpsys.org/gmp:v6.2.1:src",
+						"/pkg/warpsys.org/mpc": "catalog:warpsys.org/mpc:v1.2.1:src",
+						"/pkg/warpsys.org/mpfr": "catalog:warpsys.org/mpfr:v4.1.0:src",
+						"/src": "catalog:warpsys.org/gcc:v11.2.0:src"
 					},
 					"outputs": {
 						"out": {
@@ -48,10 +44,70 @@
 						}
 					}
 				}
+			},
+			"pack": {
+				"protoformula": {
+					"action": {
+						"script": {
+							"contents": [
+								"set -eu",
+								"find -P /pack/bin -type f -executable | xargs grep -l '^.ELF...' >/tmp/pack_bin_list",
+								"xargs -a /tmp/pack_bin_list dirname | xargs dirname | sort | uniq >/tmp/pack_bin_dirs",
+								"xargs -I_ -a /tmp/pack_bin_dirs mkdir -vp _/lib",
+								"xargs -I_ -a /tmp/pack_bin_dirs mkdir -vp _/dynbin",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/libc.so.6 _/lib",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/libm.so.6 _/lib",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/libdl.so.2 _/lib",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/ld-linux-x86-64.so.2 _/lib",
+								"while read -r binpath; do dirpath=$(dirname $(dirname \"${binpath}\" )) ; mv -v \"$binpath\" \"${dirpath}/dynbin/\" ; cp -v /pkg/warpsys.org/bootstrap/ldshim/ldshim \"${binpath}\" ; done < /tmp/pack_bin_list",
+								"while read -r dirpath; do sed -i '0,/XORIGIN/{{s/XORIGIN/$ORIGIN/}}' ${dirpath}/dynbin/* ; done < /tmp/pack_bin_dirs",
+								"find -P /pack/libexec -type f -executable | xargs grep -l '^.ELF...' >/tmp/pack_bin_list",
+								"xargs -a /tmp/pack_bin_list dirname | xargs dirname | sort | uniq >/tmp/pack_bin_dirs",
+								"xargs -I_ -a /tmp/pack_bin_dirs mkdir -vp _/lib",
+								"xargs -I_ -a /tmp/pack_bin_dirs mkdir -vp _/dynbin",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/libc.so.6 _/lib",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/libm.so.6 _/lib",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/libdl.so.2 _/lib",
+								"xargs -t -I_ -a /tmp/pack_bin_dirs cp /pkg/warpsys.org/bootstrap/glibc/lib/ld-linux-x86-64.so.2 _/lib",
+								"while read -r binpath; do dirpath=$(dirname $(dirname \"${binpath}\" )) ; mv -v \"$binpath\" \"${dirpath}/dynbin/\" ; cp -v /pkg/warpsys.org/bootstrap/ldshim/ldshim \"${binpath}\" ; done < /tmp/pack_bin_list",
+								"while read -r dirpath; do sed -i '0,/XORIGIN/{{s/XORIGIN/$ORIGIN/}}' ${dirpath}/dynbin/* ; done < /tmp/pack_bin_dirs"
+							],
+							"interpreter": "/bin/sh"
+						}
+					},
+					"inputs": {
+						"/": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
+						"/pack": "pipe:build:out",
+						"/pkg/warpsys.org/bootstrap/glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+						"/pkg/warpsys.org/bootstrap/ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64"
+					},
+					"outputs": {
+						"out": {
+							"from": "/pack",
+							"packtype": "tar"
+						}
+					}
+				}
+			},
+			"test": {
+				"protoformula": {
+					"action": {
+						"script": {
+							"contents": [
+								"/app/binutils/bin/readelf -d /testme/dynbin/gcc",
+								"/testme/bin/gcc --version"
+							],
+							"interpreter": "/bin/sh"
+						}
+					},
+					"inputs": {
+						"/": "catalog:warpsys.org/busybox:v1.35.0-2:amd64-static",
+						"/app/binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+						"/testme": "pipe:pack:out"
+					},
+					"outputs": {}
+				}
 			}
-		},
-		"outputs": {
-			"amd64": "pipe:build:out"
 		}
 	}
 }

@@ -1,55 +1,49 @@
 {
 	"plot.v1": {
-		"inputs": {
-			"glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
-			"ld": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
-			"ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
-			"make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
-			"gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64",
-			"grep": "catalog:warpsys.org/bootstrap/grep:v3.7:amd64",
-			"coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
-			"binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
-			"sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
-			"gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
-			"busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
-			"src": "catalog:warpsys.org/zlib:v1.2.13:src"
+		"inputs": {},
+		"outputs": {
+			"amd64": "pipe:build:out"
 		},
 		"steps": {
 			"build": {
 				"protoformula": {
-					"inputs": {
-						"/src": "pipe::src",
-						"/lib64": "pipe::ld",
-						"/pkg/glibc": "pipe::glibc",
-						"/pkg/make": "pipe::make",
-						"/pkg/coreutils": "pipe::coreutils",
-						"/pkg/binutils": "pipe::binutils",
-						"/pkg/gcc": "pipe::gcc",
-						"/pkg/sed": "pipe::sed",
-						"/pkg/grep": "pipe::grep",
-						"/pkg/gawk": "pipe::gawk",
-						"/pkg/busybox": "pipe::busybox",
-						"$PATH": "literal:/pkg/make/bin:/pkg/gcc/bin:/pkg/coreutils/bin:/pkg/binutils/bin:/pkg/sed/bin:/pkg/grep/bin:/pkg/gawk/bin:/pkg/busybox/bin",
-						"$CPATH": "literal:/pkg/glibc/include:/pkg/glibc/include/x86_64-linux-gnu"
-					},
 					"action": {
 						"script": {
-							"interpreter": "/pkg/busybox/bin/sh",
 							"contents": [
 								"mkdir -p /bin /tmp /prefix /usr/include/",
-								"ln -s /pkg/glibc/lib /prefix/lib",
-								"ln -s /pkg/glibc/lib /lib",
-								"ln -s /pkg/busybox/bin/sh /bin/sh",
-								"ln -s /pkg/gcc/bin/cpp /lib/cpp",
+								"ln -s /pkg/warpsys.org/bootstrap/glibc/lib /prefix/lib",
+								"ln -s /pkg/warpsys.org/bootstrap/glibc/lib /lib",
+								"ln -s /pkg/warpsys.org/bootstrap/busybox/bin/sh /bin/sh",
+								"ln -s /pkg/warpsys.org/bootstrap/gcc/bin/cpp /lib/cpp",
 								"cd /src/*",
-								"mkdir -v build",
-								"cd build",
-								"export SOURCE_DATE_EPOCH=1262304000",
-								"../configure --prefix=/warpsys-placeholder-prefix",
+								"./configure --prefix=/warpsys-placeholder-prefix",
 								"make",
-								"make DESTDIR=/out install",
-							]
+								"make DESTDIR=/out install"
+							],
+							"interpreter": "/pkg/warpsys.org/bootstrap/busybox/bin/sh"
 						}
+					},
+					"inputs": {
+						"$ARFLAGS": "literal:rvD",
+						"$CPATH": "literal:/pkg/warpsys.org/bootstrap/glibc/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/busybox/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/ldshim/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/make/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/gcc/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/grep/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/coreutils/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/binutils/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/sed/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/bootstrap/gawk/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/findutils/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu/pkg/warpsys.org/diffutils/include:/pkg/warpsys.org/bootstrap/glibc/include/x86_64-linux-gnu",
+						"$LDFLAGS": "literal:-Wl,-rpath=XORIGIN/../lib",
+						"$LD_LIBRARY_PATH": "literal:/pkg/warpsys.org/bootstrap/glibc/lib:/pkg/warpsys.org/bootstrap/busybox/lib:/pkg/warpsys.org/bootstrap/ldshim/lib:/pkg/warpsys.org/bootstrap/make/lib:/pkg/warpsys.org/bootstrap/gcc/lib:/pkg/warpsys.org/bootstrap/grep/lib:/pkg/warpsys.org/bootstrap/coreutils/lib:/pkg/warpsys.org/bootstrap/binutils/lib:/pkg/warpsys.org/bootstrap/sed/lib:/pkg/warpsys.org/bootstrap/gawk/lib:/pkg/warpsys.org/findutils/lib:/pkg/warpsys.org/diffutils/lib:",
+						"$PATH": "literal:/pkg/warpsys.org/bootstrap/glibc/bin:/pkg/warpsys.org/bootstrap/busybox/bin:/pkg/warpsys.org/bootstrap/ldshim/bin:/pkg/warpsys.org/bootstrap/make/bin:/pkg/warpsys.org/bootstrap/gcc/bin:/pkg/warpsys.org/bootstrap/grep/bin:/pkg/warpsys.org/bootstrap/coreutils/bin:/pkg/warpsys.org/bootstrap/binutils/bin:/pkg/warpsys.org/bootstrap/sed/bin:/pkg/warpsys.org/bootstrap/gawk/bin:/pkg/warpsys.org/findutils/bin:/pkg/warpsys.org/diffutils/bin:",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000",
+						"/lib64": "catalog:warpsys.org/bootstrap/glibc:v2.35:ld-amd64",
+						"/pkg/warpsys.org/bootstrap/binutils": "catalog:warpsys.org/bootstrap/binutils:v2.38:amd64",
+						"/pkg/warpsys.org/bootstrap/busybox": "catalog:warpsys.org/bootstrap/busybox:v1.35.0:amd64",
+						"/pkg/warpsys.org/bootstrap/coreutils": "catalog:warpsys.org/bootstrap/coreutils:v9.1:amd64",
+						"/pkg/warpsys.org/bootstrap/gawk": "catalog:warpsys.org/bootstrap/gawk:v5.1.1:amd64",
+						"/pkg/warpsys.org/bootstrap/gcc": "catalog:warpsys.org/bootstrap/gcc:v11.2.0:amd64",
+						"/pkg/warpsys.org/bootstrap/glibc": "catalog:warpsys.org/bootstrap/glibc:v2.35:amd64",
+						"/pkg/warpsys.org/bootstrap/grep": "catalog:warpsys.org/bootstrap/grep:v3.7:amd64",
+						"/pkg/warpsys.org/bootstrap/ldshim": "catalog:warpsys.org/bootstrap/ldshim:v1.0:amd64",
+						"/pkg/warpsys.org/bootstrap/make": "catalog:warpsys.org/bootstrap/make:v4.3:amd64",
+						"/pkg/warpsys.org/bootstrap/sed": "catalog:warpsys.org/bootstrap/sed:v4.8:amd64",
+						"/pkg/warpsys.org/diffutils": "catalog:warpsys.org/diffutils:v3.8:amd64",
+						"/pkg/warpsys.org/findutils": "catalog:warpsys.org/findutils:v4.9.0-2:amd64",
+						"/src": "catalog:warpsys.org/zlib:v1.3:src"
 					},
 					"outputs": {
 						"out": {
@@ -59,9 +53,6 @@
 					}
 				}
 			}
-		},
-		"outputs": {
-			"amd64": "pipe:build:out"
 		}
 	}
 }

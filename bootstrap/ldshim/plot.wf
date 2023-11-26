@@ -1,39 +1,36 @@
 {
 	"plot.v1": {
-		"inputs": {
-			"rootfs": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
-			"src": "catalog:warpsys.org/ldshim:v1.0:src"
-		},
+		"inputs": {},
+		"outputs": {},
 		"steps": {
 			"build": {
 				"protoformula": {
-					"inputs": {
-						"/": "pipe::rootfs",
-						"/src": "pipe::src"
-					},
 					"action": {
 						"script": {
-							"interpreter": "/bin/sh",
 							"contents": [
+								"mkdir -p /out/warpsys-placeholder-prefix/bin",
 								"cd /src",
 								"make",
-								"mkdir -vp /out",
-								"cp ldshim /out"
+								"cp ldshim /out/warpsys-placeholder-prefix/bin"
 							],
-							"network": false
+							"interpreter": "/bin/sh"
 						}
+					},
+					"inputs": {
+						"$ARFLAGS": "literal:rvD",
+						"$LDFLAGS": "literal:-Wl,-rpath=XORIGIN/../lib",
+						"$SOURCE_DATE_EPOCH": "literal:1262304000",
+						"/": "catalog:warpsys.org/bootstrap/debian:bullseye-1646092800:amd64",
+						"/src": "catalog:warpsys.org/ldshim:v1.0:src"
 					},
 					"outputs": {
 						"out": {
-							"from": "/out",
+							"from": "/out/warpsys-placeholder-prefix",
 							"packtype": "tar"
 						}
 					}
 				}
 			}
-		},
-		"outputs": {
-			"amd64": "pipe:build:out"
 		}
 	}
 }
